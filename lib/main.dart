@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:si_warga/pages/first_onboarding.dart';
-import 'package:si_warga/pages/splash_screen.dart';
+import 'package:si_warga/pages/warga_tagihan_warga.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF184E0E)),
         fontFamily: 'Neue Montreal',
       ),
-      home: const SplashScreen(),
+      home: const WargaTagihanWarga(),
     );
   }
 }

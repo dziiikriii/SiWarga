@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// import 'package:si_warga/pages/first_onboarding.dart';
+import 'package:si_warga/pages/homepage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -152,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    MaterialPageRoute(builder: (context) => const Homepage()),
                   );
                 },
                 style: TextButton.styleFrom(
