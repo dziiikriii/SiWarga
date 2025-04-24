@@ -23,7 +23,7 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
           children: [
             SizedBox(height: 20),
             YearBar(),
-            LunasBar(),
+            LunasBar(leftText: 'Belum Lunas', rightText: 'Lunas'),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,

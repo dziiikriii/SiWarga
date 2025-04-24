@@ -24,7 +24,7 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
           children: [
             SizedBox(height: 20),
             YearBar(),
-            LunasBar(),
+            LunasBar(leftText: 'Iuran Bulanan', rightText: ('Iuran Lainnya')),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,

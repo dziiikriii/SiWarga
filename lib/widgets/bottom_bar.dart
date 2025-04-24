@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:si_warga/pages/admin_profile.dart';
+import 'package:si_warga/pages/admin_rekap_iuran.dart';
 import 'package:si_warga/pages/homepage.dart';
 import 'package:si_warga/pages/admin_tagihan_warga.dart';
+import 'package:si_warga/pages/laporan_keuangan.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({super.key});
@@ -21,16 +24,16 @@ class _BottomBarState extends State<BottomBar> {
   List<Widget> pages = [
     Homepage(),
     AdminTagihanWarga(),
-    Text('Rekap'),
-    Text('Laporan'),
-    Text('Profil'),
+    AdminRekapIuran(),
+    LaporanKeuangan(),
+    AdminProfile(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16), // Padding dari tepi layar
-      child: BottomNavigationBar(
+    return Scaffold(
+      body: pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Color(0xFFB4CCAC), // supaya ikut container
         // elevation: 0, // hilangkan bayangan bawaannya

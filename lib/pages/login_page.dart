@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:si_warga/pages/first_onboarding.dart';
-import 'package:si_warga/pages/homepage.dart';
+// import 'package:si_warga/pages/homepage.dart';
+import 'package:si_warga/widgets/bottom_bar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -152,9 +153,9 @@ class _LoginPageState extends State<LoginPage> {
               width: boxWidth,
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const Homepage()),
+                    MaterialPageRoute(builder: (context) => BottomBar()),
                   );
                 },
                 style: TextButton.styleFrom(

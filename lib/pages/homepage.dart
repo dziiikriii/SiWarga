@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/admin_tagihan_warga.dart';
-import 'package:si_warga/widgets/bottom_bar.dart';
 import 'package:si_warga/widgets/info_saldo_home.dart';
 
 class Homepage extends StatelessWidget {
@@ -26,7 +25,7 @@ class Homepage extends StatelessWidget {
             ),
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -159,7 +158,7 @@ class Homepage extends StatelessWidget {
               style: TextStyle(color: Color(0xFF777777)),
             ),
           ),
-          BottomBar(),
+          // BottomBar(),
         ],
       ),
     );
