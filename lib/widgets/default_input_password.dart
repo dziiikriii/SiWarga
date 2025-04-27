@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DefaultInputPassword extends StatefulWidget {
-  const DefaultInputPassword({super.key});
+  final TextEditingController? controller;
+
+  const DefaultInputPassword({super.key, this.controller});
 
   @override
   State<DefaultInputPassword> createState() => _DefaultInputPasswordState();
@@ -18,6 +20,7 @@ class _DefaultInputPasswordState extends State<DefaultInputPassword> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: TextField(
+            controller: widget.controller,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
               hintText: 'Masukkan password',

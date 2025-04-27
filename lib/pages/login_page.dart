@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:si_warga/pages/first_onboarding.dart';
-// import 'package:si_warga/pages/homepage.dart';
-import 'package:si_warga/widgets/bottom_bar.dart';
+import 'package:si_warga/pages/auth_service.dart';
+import 'package:si_warga/pages/lupa_password.dart';
+import 'package:si_warga/pages/signin_page.dart';
+// import 'package:si_warga/widgets/bottom_bar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,8 +12,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String selectedRole = 'warga'; // Default pilihan aktif
+  // String selectedRole = 'warga'; // Default pilihan aktif
   bool _obscurePassword = true;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,72 +31,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Icon(Icons.close_rounded, size: 30),
             const SizedBox(height: 40),
-            Container(
-              width: boxWidth,
-              height: 54,
-              decoration: BoxDecoration(
-                color: const Color(0xFF184E0E),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          selectedRole = 'warga';
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            selectedRole == 'warga'
-                                ? const Color(0xFF1F6711)
-                                : const Color(0xFF184E0E),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Warga',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // const SizedBox(width: 10), // Jarak antar tombol
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          selectedRole = 'admin';
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            selectedRole == 'admin'
-                                ? const Color(0xFF1F6711)
-                                : const Color(0xFF184E0E),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Admin',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // WargaAdminLoginBar(),
             const SizedBox(height: 40),
             Text(
               'Masuk',
@@ -107,6 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             Text('Email', style: TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
             TextFormField(
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: 'Masukkan email anda',
@@ -124,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
             Text('Password', style: TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
             TextFormField(
+              controller: passwordController,
               obscureText: _obscurePassword,
               // keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
@@ -152,12 +92,31 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               width: boxWidth,
               child: TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
+                onPressed: () async {
+                  final email = emailController.text;
+                  final password = passwordController.text;
+                  final user = await AuthService().loginWithEmail(
+                    email,
+                    password,
                     context,
-                    MaterialPageRoute(builder: (context) => BottomBar()),
                   );
+                  // if (user != null) {
+                  //   Navigator.pushReplacement(
+                  //     context,
+                  //     MaterialPageRoute(builder: (context) => BottomBar()),
+                  //   );
+                  // } else {
+                  //   ScaffoldMessenger.of(
+                  //     context,
+                  //   ).showSnackBar(SnackBar(content: Text('Login gagal')));
+                  // }
+                  if (user == null) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Login gagal')));
+                  }
                 },
+
                 style: TextButton.styleFrom(
                   backgroundColor: const Color(0xFF184E0E),
                   foregroundColor: Colors.white,
@@ -177,10 +136,71 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 10),
             Center(
-              child: Text(
-                'Lupa password?',
-                style: TextStyle(color: Color(0xFF777777)),
-                textAlign: TextAlign.center,
+              // child: Text(
+              //   'Lupa password?',
+              //   style: TextStyle(color: Color(0xFF777777)),
+              //   textAlign: TextAlign.center,
+              // ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Belum punya akun? ',
+                    style: TextStyle(color: Color(0xFF777777)),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      splashFactory: NoSplash.splashFactory,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => SigninPage()),
+                      );
+                    },
+                    child: Text(
+                      'Daftar',
+                      style: TextStyle(color: Color(0xFF184E0E)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Center(
+              // child: Text(
+              //   'Lupa password?',
+              //   style: TextStyle(color: Color(0xFF777777)),
+              //   textAlign: TextAlign.center,
+              // ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Belum punya akun? ',
+                    style: TextStyle(color: Color(0xFF777777)),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      splashFactory: NoSplash.splashFactory,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LupaPassword()),
+                      );
+                    },
+                    child: Text(
+                      'Lupa Password?',
+                      style: TextStyle(color: Color(0xFF184E0E)),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

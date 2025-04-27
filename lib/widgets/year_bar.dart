@@ -20,7 +20,7 @@ class YearBar extends StatelessWidget {
               // constraints: BoxConstraints(),
               icon: Icon(Icons.arrow_back_ios_new_rounded, size: 15),
               onPressed: () {
-                print('back');
+                debugPrint('back');
               },
             ),
             Text('2025', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -29,7 +29,7 @@ class YearBar extends StatelessWidget {
               // constraints: BoxConstraints(),
               icon: Icon(Icons.arrow_forward_ios_rounded, size: 15),
               onPressed: () {
-                print('next');
+                debugPrint('next');
               },
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/admin_tagihan_warga.dart';
+import 'package:si_warga/widgets/halo_user.dart';
 import 'package:si_warga/widgets/info_saldo_home.dart';
 
 class Homepage extends StatelessWidget {
@@ -63,14 +64,15 @@ class Homepage extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 50),
-                    Text(
-                      'Halo, Admin!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF184E0E),
-                        fontSize: 35,
-                      ),
-                    ),
+                    // Text(
+                    //   'Halo, Admin!',
+                    //   style: TextStyle(
+                    //     fontWeight: FontWeight.bold,
+                    //     color: Color(0xFF184E0E),
+                    //     fontSize: 35,
+                    //   ),
+                    // ),
+                    HaloUser(),
                     SizedBox(height: 6),
                     Text(
                       'Perumahan Bukit Hijau Permata Hijau',
