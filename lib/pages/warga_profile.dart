@@ -2,34 +2,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/auth_service.dart';
-import 'package:si_warga/pages/edit_akun_admin.dart';
+import 'package:si_warga/pages/edit_akun_warga.dart';
 import 'package:si_warga/pages/login_page.dart';
-import 'package:si_warga/pages/tambah_admin.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/full_width_button.dart';
 
-class AdminProfile extends StatefulWidget {
-  const AdminProfile({super.key});
+class WargaProfile extends StatefulWidget {
+  const WargaProfile({super.key});
 
   @override
-  State<AdminProfile> createState() => _AdminProfileState();
+  State<WargaProfile> createState() => _WargaProfileState();
 }
 
-class _AdminProfileState extends State<AdminProfile> {
+class _WargaProfileState extends State<WargaProfile> {
   String nama = '';
   String email = '';
+  String alamat = '';
+  String blok = '';
+  String noRumah = '';
 
   @override
   void initState() {
     super.initState();
     fetchDataProfil();
     // Future.delayed(Duration.zero, fetchDataProfil());
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    fetchDataProfil();
   }
 
   String capitalizeEachWord(String text) {
@@ -55,6 +51,9 @@ class _AdminProfileState extends State<AdminProfile> {
           setState(() {
             nama = capitalizeEachWord(docSnapshot.data()?['name']);
             email = user.email ?? '';
+            alamat = capitalizeEachWord(docSnapshot.data()?['address']);
+            blok = docSnapshot.data()?['blok'];
+            noRumah = docSnapshot.data()?['no_rumah'];
             // email = docSnapshot.data()?['email'];
           });
         }
@@ -107,43 +106,50 @@ class _AdminProfileState extends State<AdminProfile> {
               ],
             ),
             SizedBox(height: 20),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Text(
-            //       'No. Telepon',
-            //       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-            //     ),
-            //     Text(
-            //       '089768374874',
-            //       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-            //     ),
-            //   ],
-            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Alamat',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                ),
+                Text(
+                  alamat,
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Blok dan No. Rumah',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                ),
+                Text(
+                  'Blok $blok No. $noRumah',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                ),
+              ],
+            ),
             SizedBox(height: 20),
             FullWidthButton(
               text: 'Edit Akun',
               onPressed: () async {
-                final updatedName = await Navigator.push(
+                final updatedData = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditAkunAdmin()),
+                  MaterialPageRoute(builder: (context) => EditAkunWarga()),
                 );
 
-                if (updatedName != null && updatedName is String) {
+                if (updatedData != null && updatedData is Map<String, String>) {
                   setState(() {
-                    nama = capitalizeEachWord(updatedName);
+                    nama = capitalizeEachWord(updatedData['name'] ?? '');
+                    alamat = capitalizeEachWord(updatedData['address'] ?? '');
+                    blok = updatedData['blok'] ?? '';
+                    noRumah = updatedData['no_rumah'] ?? '';
                   });
                 }
-              },
-            ),
-            SizedBox(height: 20),
-            FullWidthButton(
-              text: 'Tambah Admin',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TambahAdmin()),
-                );
               },
             ),
             SizedBox(height: 20),

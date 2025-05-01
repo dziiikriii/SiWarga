@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:si_warga/pages/admin_tagihan_warga.dart';
 import 'package:si_warga/widgets/halo_user.dart';
 import 'package:si_warga/widgets/info_saldo_home.dart';
 import 'package:si_warga/widgets/year_bar.dart';
 
-class Homepage extends StatelessWidget {
-  const Homepage({super.key});
+class HomepageWarga extends StatelessWidget {
+  const HomepageWarga({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class Homepage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Image.asset('lib/assets/logo_only.png', width: 80),
+                            Image.asset('lib/assets/logo_only.png', width: 100),
                             SizedBox(width: 15),
                             Text(
                               'SIWARGA',
@@ -72,41 +71,41 @@ class Homepage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AdminTagihanWarga(),
-                          ),
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: const Color(0xFF184E0E),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text(
-                              'Kelola Warga',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Icon(Icons.arrow_forward_rounded, size: 25),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // TextButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => const AdminTagihanWarga(),
+                    //       ),
+                    //     );
+                    //   },
+                    //   style: TextButton.styleFrom(
+                    //     backgroundColor: const Color(0xFF184E0E),
+                    //     foregroundColor: Colors.white,
+                    //     padding: const EdgeInsets.symmetric(vertical: 12),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //     ),
+                    //   ),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 20),
+                    //     child: Row(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       children: const [
+                    //         Text(
+                    //           'Kelola Warga',
+                    //           style: TextStyle(
+                    //             fontSize: 16,
+                    //             fontWeight: FontWeight.bold,
+                    //           ),
+                    //         ),
+                    //         SizedBox(width: 10),
+                    //         Icon(Icons.arrow_forward_rounded, size: 25),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 50),
                     InfoSaldoHome(),
                   ],

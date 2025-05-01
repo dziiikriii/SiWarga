@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/auth_service.dart';
 import 'package:si_warga/pages/lupa_password.dart';
 import 'package:si_warga/pages/signin_page.dart';
+import 'package:si_warga/widgets/bottom_bar.dart';
 // import 'package:si_warga/widgets/bottom_bar.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +18,14 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,27 +103,40 @@ class _LoginPageState extends State<LoginPage> {
               width: boxWidth,
               child: TextButton(
                 onPressed: () async {
-                  final email = emailController.text;
-                  final password = passwordController.text;
+                  final email = emailController.text.trim();
+                  final password = passwordController.text.trim();
+
+                  showLoadingDialog();
+
                   final user = await AuthService().loginWithEmail(
                     email,
                     password,
                     context,
                   );
-                  // if (user != null) {
-                  //   Navigator.pushReplacement(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) => BottomBar()),
-                  //   );
-                  // } else {
-                  //   ScaffoldMessenger.of(
-                  //     context,
-                  //   ).showSnackBar(SnackBar(content: Text('Login gagal')));
-                  // }
-                  if (user == null) {
-                    ScaffoldMessenger.of(
+
+                  if (!mounted) return;
+
+                  Navigator.pop(context); // Tutup loading dialog
+
+                  if (user != null) {
+                    // Ambil role-nya
+                    final userDoc =
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user.uid)
+                            .get();
+                    final role = userDoc['role'];
+
+                    Navigator.pushReplacement(
                       context,
-                    ).showSnackBar(SnackBar(content: Text('Login gagal')));
+                      MaterialPageRoute(
+                        builder: (context) => BottomBar(role: role),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Login gagal')),
+                    );
                   }
                 },
 

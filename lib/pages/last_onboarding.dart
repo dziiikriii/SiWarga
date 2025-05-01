@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:si_warga/pages/login_page.dart';
 
 class LastOnboarding extends StatelessWidget {
@@ -42,10 +43,12 @@ class LastOnboarding extends StatelessWidget {
               ),
               SizedBox(height: 30),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('onboardingSeen', true);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
                   );
                 },
                 style: TextButton.styleFrom(

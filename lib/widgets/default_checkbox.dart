@@ -8,9 +8,9 @@ class DefaultCheckbox extends StatefulWidget {
 }
 
 class _DefaultCheckboxState extends State<DefaultCheckbox> {
+  bool? isChecked = false;
   @override
   Widget build(BuildContext context) {
-    bool? isChecked = false;
     return Checkbox(
       value: isChecked,
       activeColor: Color(0xFF37672F),

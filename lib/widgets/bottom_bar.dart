@@ -3,8 +3,10 @@ import 'package:si_warga/pages/admin_profile.dart';
 import 'package:si_warga/pages/admin_rekap_iuran.dart';
 import 'package:si_warga/pages/homepage.dart';
 import 'package:si_warga/pages/admin_tagihan_warga.dart';
+import 'package:si_warga/pages/homepage_warga.dart';
 import 'package:si_warga/pages/laporan_keuangan.dart';
 import 'package:si_warga/pages/riwayat_pembayaran_warga.dart';
+import 'package:si_warga/pages/warga_profile.dart';
 import 'package:si_warga/pages/warga_tagihan_warga.dart';
 
 class BottomBar extends StatefulWidget {
@@ -25,11 +27,11 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   List<Widget> wargaPages = [
-    Homepage(),
+    HomepageWarga(),
     WargaTagihanWarga(),
     RiwayatPembayaranWarga(),
     LaporanKeuangan(),
-    AdminProfile(),
+    WargaProfile(),
   ];
 
   List<Widget> adminPages = [
@@ -40,9 +42,45 @@ class _BottomBarState extends State<BottomBar> {
     AdminProfile(),
   ];
 
+  List<BottomNavigationBarItem> wargaBottomNavItems = [
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+    BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Tagihan'),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.work_history_rounded),
+      label: 'Riwayat',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.insert_chart_outlined),
+      label: 'Laporan',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.person_2_rounded),
+      label: 'Profil',
+    ),
+  ];
+
+  List<BottomNavigationBarItem> adminBottomNavItems = [
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+    BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Tagihan'),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.request_quote_outlined),
+      label: 'Rekap',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.insert_chart_outlined),
+      label: 'Laporan',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.person_2_rounded),
+      label: 'Profil',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final pages = widget.role == 'admin' ? adminPages : wargaPages;
+    final bottomNavItems =
+        widget.role == 'admin' ? adminBottomNavItems : wargaBottomNavItems;
 
     return Scaffold(
       body: pages[_selectedIndex],
@@ -57,22 +95,7 @@ class _BottomBarState extends State<BottomBar> {
         selectedIconTheme: const IconThemeData(size: 24),
         unselectedIconTheme: const IconThemeData(size: 24),
         onTap: _onTap,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Tagihan'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.request_quote_outlined),
-            label: 'Rekap',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.insert_chart_outlined),
-            label: 'Laporan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_rounded),
-            label: 'Profil',
-          ),
-        ],
+        items: bottomNavItems,
       ),
     );
   }

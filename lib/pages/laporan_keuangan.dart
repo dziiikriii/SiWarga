@@ -12,12 +12,13 @@ class LaporanKeuangan extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDefault(title: 'Laporan Keuangan'),
-      body: Column(
-        children: [
-          YearBar(),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Container(
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            YearBar(),
+            SizedBox(height: 20),
+            Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
@@ -79,8 +80,8 @@ class LaporanKeuangan extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

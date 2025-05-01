@@ -18,6 +18,16 @@ class _HaloUserState extends State<HaloUser> {
     fetchNamaUser();
   }
 
+  String capitalizeEachWord(String text) {
+    return text
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
+  }
+
   Future<void> fetchNamaUser() async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -26,7 +36,8 @@ class _HaloUserState extends State<HaloUser> {
             await FirebaseFirestore.instance.collection('users').doc(uid).get();
         if (docSnapshot.exists) {
           setState(() {
-            namaUser = docSnapshot.data()?['name'] ?? 'Admin';
+            namaUser =
+                (docSnapshot.data()?['name'] ?? 'Admin').split(' ').first;
           });
         }
       }
@@ -38,7 +49,7 @@ class _HaloUserState extends State<HaloUser> {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Halo, $namaUser!',
+      'Halo, ${capitalizeEachWord(namaUser)}!',
       style: TextStyle(
         fontWeight: FontWeight.bold,
         color: Color(0xFF184E0E),
