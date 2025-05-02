@@ -19,6 +19,7 @@ class AppBarDefault extends StatelessWidget implements PreferredSizeWidget {
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
       backgroundColor: const Color(0xFF37672F),
+      iconTheme: IconThemeData(color: Colors.white),
       title: Text(
         title,
         style: const TextStyle(
