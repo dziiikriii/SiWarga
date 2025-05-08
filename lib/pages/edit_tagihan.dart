@@ -5,38 +5,64 @@ import 'package:si_warga/widgets/default_input.dart';
 import 'package:si_warga/widgets/default_input_date.dart';
 import 'package:si_warga/widgets/full_width_button.dart';
 
-class TambahTagihan extends StatefulWidget {
-  const TambahTagihan({super.key});
+class EditTagihan extends StatefulWidget {
+  final String tagihanId;
+  final Map<String, dynamic> tagihanData;
+  const EditTagihan({
+    super.key,
+    required this.tagihanId,
+    required this.tagihanData,
+  });
 
   @override
-  State<TambahTagihan> createState() => _TambahTagihanState();
+  State<EditTagihan> createState() => _EditTagihanState();
 }
 
-class _TambahTagihanState extends State<TambahTagihan> {
-  final namaTagihanController = TextEditingController();
-  final jumlahTagihanController = TextEditingController();
-  final tipeTagihanController = TextEditingController();
-  final dateController = TextEditingController();
+class _EditTagihanState extends State<EditTagihan> {
+  // final namaTagihanController = TextEditingController();
+  // final jumlahTagihanController = TextEditingController();
+  // final tipeTagihanController = TextEditingController();
+  // final dateController = TextEditingController();
+  late TextEditingController namaTagihanController;
+  late TextEditingController jumlahTagihanController;
+  late TextEditingController tipeTagihanController;
+  late TextEditingController dateController;
 
-  String? selectedType = 'Iuran Bulanan';
+  String? selectedType;
 
   final List<String> tipeTagihan = ['Iuran Bulanan', 'Iuran Lainnya'];
 
-  Future<void> selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2050),
-      initialDate: DateTime.now(),
+  @override
+  void initState() {
+    super.initState();
+    namaTagihanController = TextEditingController(
+      text: widget.tagihanData['nama'],
     );
-
-    if (picked != null) {
-      setState(() {
-        dateController.text =
-            "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
-      });
-    }
+    jumlahTagihanController = TextEditingController(
+      text: widget.tagihanData['jumlah'].toString(),
+    );
+    tipeTagihanController = TextEditingController(
+      text: widget.tagihanData['tipe'],
+    );
+    dateController = TextEditingController(text: widget.tagihanData['tenggat']);
+    selectedType = widget.tagihanData['tipe'];
   }
+
+  // Future<void> selectDate(BuildContext context) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     firstDate: DateTime(2024),
+  //     lastDate: DateTime(2050),
+  //     initialDate: DateTime.now(),
+  //   );
+
+  //   if (picked != null) {
+  //     setState(() {
+  //       dateController.text =
+  //           "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -87,21 +113,22 @@ class _TambahTagihanState extends State<TambahTagihan> {
             ),
             SizedBox(height: 20),
             FullWidthButton(
-              text: 'Simpan',
+              text: 'Simpan Perubahan',
               onPressed: () async {
                 final firestore = FirebaseFirestore.instance;
 
-                final tagihanData = {
+                final updatedData = {
                   'nama': namaTagihanController.text,
                   'jumlah': int.parse(jumlahTagihanController.text),
                   'tipe': selectedType,
                   'tenggat': dateController.text,
-                  'createdAt': FieldValue.serverTimestamp(),
+                  // 'createdAt': FieldValue.serverTimestamp(),
                 };
 
-                final tagihanRef = await firestore
+                await firestore
                     .collection('tagihan')
-                    .add(tagihanData);
+                    .doc(widget.tagihanId)
+                    .update(updatedData);
 
                 final wargaSnapshot =
                     await firestore
@@ -114,9 +141,28 @@ class _TambahTagihanState extends State<TambahTagihan> {
                       .collection('tagihan_user')
                       .doc(doc.id)
                       .collection('items')
-                      .doc(tagihanRef.id)
-                      .set({...tagihanData, 'status': 'belum bayar'});
+                      .doc(widget.tagihanId)
+                      .update(updatedData);
                 }
+
+                // final tagihanRef = await firestore
+                //     .collection('tagihan')
+                //     .add(tagihanData);
+
+                // final wargaSnapshot =
+                //     await firestore
+                //         .collection('users')
+                //         .where('role', isEqualTo: 'warga')
+                //         .get();
+
+                // for (var doc in wargaSnapshot.docs) {
+                //   await firestore
+                //       .collection('tagihan_user')
+                //       .doc(doc.id)
+                //       .collection('items')
+                //       .doc(tagihanRef.id)
+                //       .set({...tagihanData, 'status': 'belum bayar'});
+                // }
                 Navigator.pop(context);
               },
             ),

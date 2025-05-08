@@ -14,6 +14,7 @@ class TambahPemasukan extends StatefulWidget {
 class _TambahPemasukanState extends State<TambahPemasukan> {
   final namaPemasukanController = TextEditingController();
   final jumlahPemasukanController = TextEditingController();
+  final dateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class _TambahPemasukanState extends State<TambahPemasukan> {
               controller: jumlahPemasukanController,
               keyboardType: TextInputType.number,
             ),
-            DefaultInputDate(title: 'Tanggal Pemasukan'),
+            DefaultInputDate(title: 'Tanggal Pemasukan', dateController: dateController,),
             SizedBox(height: 20),
             FullWidthButton(text: 'Simpan', onPressed: () {}),
           ],

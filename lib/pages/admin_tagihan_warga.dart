@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/tambah_tagihan.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
@@ -32,18 +33,28 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10,
-                    top: 10,
-                    bottom: 10,
-                    right: 20,
-                  ),
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return ChecklistTagihanItem(
-                        title: 'Bulan ke-${index + 1}',
-                        value: (index + 1) * 10000,
+                  padding: const EdgeInsets.all(10),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream:
+                        FirebaseFirestore.instance
+                            .collection('tagihan')
+                            .orderBy('createdAt', descending: true)
+                            .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return CircularProgressIndicator();
+                      final tagihanList = snapshot.data!.docs;
+
+                      return ListView.builder(
+                        itemCount: tagihanList.length,
+                        itemBuilder: (context, index) {
+                          final data = tagihanList[index];
+                          return ChecklistTagihanItem(
+                            title: data['nama'],
+                            value: data['jumlah'],
+                            tagihanId: data.id,
+                            tagihanData: data.data() as Map<String, dynamic>,
+                          );
+                        },
                       );
                     },
                   ),

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class DefaultInputDate extends StatefulWidget {
   final String title;
+  final TextEditingController dateController;
 
-  const DefaultInputDate({super.key, required this.title});
+  const DefaultInputDate({super.key, required this.title, required this.dateController});
 
   @override
   State<DefaultInputDate> createState() => _DefaultInputDateState();
 }
 
 class _DefaultInputDateState extends State<DefaultInputDate> {
-  final dateController = TextEditingController();
 
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -22,7 +22,7 @@ class _DefaultInputDateState extends State<DefaultInputDate> {
 
     if (picked != null) {
       setState(() {
-        dateController.text =
+        widget.dateController.text =
             "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
       });
     }
@@ -36,7 +36,7 @@ class _DefaultInputDateState extends State<DefaultInputDate> {
         Text(widget.title, style: TextStyle(fontSize: 14)),
         SizedBox(height: 10),
         TextField(
-          controller: dateController,
+          controller: widget.dateController,
           readOnly: true, // agar tidak bisa diketik manual
           onTap: () => selectDate(context),
           decoration: InputDecoration(

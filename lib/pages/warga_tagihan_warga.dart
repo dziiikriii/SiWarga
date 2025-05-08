@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/bayar_tagihan_bar.dart';
@@ -15,6 +17,8 @@ class WargaTagihanWarga extends StatefulWidget {
 class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUserId = currentUser?.uid;
     return Scaffold(
       appBar: AppBarDefault(title: 'Tagihan Iuran Warga'),
       body: SingleChildScrollView(
@@ -39,16 +43,51 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
                     right: 20,
                   ),
                   // child: ListView(children: [ ChecklistTagihanItem()]),
-                  child: Column(
-                    children: [
-                      // ChecklistTagihanItem(),
-                      // ChecklistTagihanItem(),
-                      // ChecklistTagihanItem(),
-                      // ChecklistTagihanItem(),
-                      // ChecklistTagihanItem(),
-                      // ChecklistTagihanItem(),
-                      // ChecklistTagihanItem(),
-                    ],
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream:
+                        FirebaseFirestore.instance
+                            .collection('tagihan_user')
+                            .doc(currentUserId)
+                            .collection('items')
+                            .orderBy('createdAt', descending: true)
+                            .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Text('Belum ada tagihan.');
+                      }
+
+                      final tagihanList = snapshot.data!.docs;
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: tagihanList.length,
+                        itemBuilder: (context, index) {
+                          final tagihan = tagihanList[index];
+                          return ListTile(
+                            contentPadding: EdgeInsets.symmetric(vertical: 8),
+                            title: Text(tagihan['nama'] ?? 'Tanpa Nama'),
+                            subtitle: Text(
+                              'Jumlah: Rp${tagihan['jumlah']} \nTenggat: ${tagihan['tenggat']}',
+                            ),
+                            trailing: Text(
+                              tagihan['status'],
+                              style: TextStyle(
+                                color:
+                                    tagihan['status'] == 'belum bayar'
+                                        ? Colors.red
+                                        : Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
               ),
