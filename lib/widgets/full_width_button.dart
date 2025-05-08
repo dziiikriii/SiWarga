@@ -4,22 +4,23 @@ class FullWidthButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color? color;
+  final double width; // 👈 tambahan parameter
 
   const FullWidthButton({
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = const Color(0xFF184E0E)
+    this.color = const Color(0xFF184E0E),
+    this.width = double.infinity, // 👈 default: penuh
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: width, // gunakan nilai parameter width
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          // backgroundColor: const Color(0xFF184E0E),
           backgroundColor: color,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 12),

@@ -17,16 +17,16 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDefault(title: 'Tagihan Iuran Warga'),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              YearBar(),
-              LunasBar(leftText: 'Iuran Bulanan', rightText: ('Iuran Lainnya')),
-              SizedBox(height: 20),
-              Container(
+      body: Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            YearBar(),
+            LunasBar(leftText: 'Iuran Bulanan', rightText: ('Iuran Lainnya')),
+            SizedBox(height: 20),
+            Expanded(
+              child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -38,41 +38,29 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                     bottom: 10,
                     right: 20,
                   ),
-                  // child: ListView(children: [ ChecklistTagihanItem()]),
-                  child: Column(
-                    children: [
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                      ChecklistTagihanItem(),
-                    ],
+                  child: ListView.builder(
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return ChecklistTagihanItem(
+                        title: 'Bulan ke-${index + 1}',
+                        value: (index + 1) * 10000,
+                      );
+                    },
                   ),
                 ),
               ),
-              // FullWidthButton(
-              //   text: 'Edit Tagihan',
-              //   onPressed: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => const LoginPage()),
-              //     );
-              //   },
-              // ),
-            ],
-          ),
+            ),
+
+            // FullWidthButton(
+            //   text: 'Edit Tagihan',
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => const LoginPage()),
+            //     );
+            //   },
+            // ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

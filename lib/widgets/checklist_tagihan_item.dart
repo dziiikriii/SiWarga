@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ChecklistTagihanItem extends StatefulWidget {
-  const ChecklistTagihanItem({super.key});
+  final String title;
+  final int value;
+  const ChecklistTagihanItem({
+    super.key,
+    required this.title,
+    required this.value,
+  });
 
   @override
   State<ChecklistTagihanItem> createState() => _ChecklistTagihanItemState();
@@ -16,11 +22,11 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Februari',
+            widget.title,
             style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
           ),
           Text(
-            'Rp 50.000',
+            widget.value.toString(),
             style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
           ),
         ],

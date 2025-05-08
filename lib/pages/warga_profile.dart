@@ -67,135 +67,138 @@ class _WargaProfileState extends State<WargaProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDefault(title: 'Detail Akun'),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          children: [
-            Image.asset('lib/assets/siwarga_logo.png', height: 100),
-            SizedBox(height: 20),
-            Text(
-              nama,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Nama',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-                Text(
-                  nama,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Email',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-                Text(
-                  email,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Alamat',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-                Text(
-                  alamat,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Blok dan No. Rumah',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-                Text(
-                  'Blok $blok No. $noRumah',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            FullWidthButton(
-              text: 'Edit Akun',
-              onPressed: () async {
-                final updatedData = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EditAkunWarga()),
-                );
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            children: [
+              Image.asset('lib/assets/siwarga_logo.png', height: 100),
+              SizedBox(height: 20),
+              Text(
+                nama,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Nama',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                  Text(
+                    nama,
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Email',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                  Text(
+                    email,
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Alamat',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                  Text(
+                    alamat,
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Blok dan No. Rumah',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                  Text(
+                    'Blok $blok No. $noRumah',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              FullWidthButton(
+                text: 'Edit Akun',
+                onPressed: () async {
+                  final updatedData = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditAkunWarga()),
+                  );
 
-                if (updatedData != null && updatedData is Map<String, String>) {
-                  setState(() {
-                    nama = capitalizeEachWord(updatedData['name'] ?? '');
-                    alamat = capitalizeEachWord(updatedData['address'] ?? '');
-                    blok = updatedData['blok'] ?? '';
-                    noRumah = updatedData['no_rumah'] ?? '';
-                  });
-                }
-              },
-            ),
-            SizedBox(height: 20),
-            FullWidthButton(
-              text: 'Logout',
-              onPressed: () async {
-                final shouldLogout = await showDialog<bool>(
-                  context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: Text('Konfirmasi Logout'),
-                        content: Text('Apakah Anda yakin ingin logout?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: Text(
-                              'Batal',
-                              style: TextStyle(color: Color(0xFF777777)),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            child: Text(
-                              'Logout',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 42, 42),
+                  if (updatedData != null &&
+                      updatedData is Map<String, String>) {
+                    setState(() {
+                      nama = capitalizeEachWord(updatedData['name'] ?? '');
+                      alamat = capitalizeEachWord(updatedData['address'] ?? '');
+                      blok = updatedData['blok'] ?? '';
+                      noRumah = updatedData['no_rumah'] ?? '';
+                    });
+                  }
+                },
+              ),
+              SizedBox(height: 20),
+              FullWidthButton(
+                text: 'Logout',
+                onPressed: () async {
+                  final shouldLogout = await showDialog<bool>(
+                    context: context,
+                    builder:
+                        (context) => AlertDialog(
+                          title: Text('Konfirmasi Logout'),
+                          content: Text('Apakah Anda yakin ingin logout?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: Text(
+                                'Batal',
+                                style: TextStyle(color: Color(0xFF777777)),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                );
-
-                if (shouldLogout == true) {
-                  await AuthService().logout();
-
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                    (Route<dynamic> route) => false,
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: Text(
+                                'Logout',
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 42, 42),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                   );
-                }
-              },
-              color: Color.fromARGB(255, 255, 42, 42),
-            ),
-          ],
+
+                  if (shouldLogout == true) {
+                    await AuthService().logout();
+
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
+                },
+                color: Color.fromARGB(255, 255, 42, 42),
+              ),
+            ],
+          ),
         ),
       ),
     );

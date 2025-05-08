@@ -9,21 +9,30 @@ class RiwayatPembayaranWarga extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDefault(title: 'Riwayat Pembayaran'),
-      body: Padding(
-        padding: const EdgeInsets.all(25),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white ,
-                borderRadius: BorderRadius.circular(10),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    RiwayatPembayaranItem(),
+                    RiwayatPembayaranItem(),
+                    RiwayatPembayaranItem(),
+                    RiwayatPembayaranItem(),
+                    RiwayatPembayaranItem(),
+                    RiwayatPembayaranItem(),
+                    RiwayatPembayaranItem(),
+                  ],
+                ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: RiwayatPembayaranItem(),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -26,6 +26,7 @@ class AuthService {
   Future<void> saveUserData(
     String uid,
     String name,
+    String email,
     String address,
     String blok,
     String noRumah,
@@ -33,10 +34,12 @@ class AuthService {
     try {
       await _firestore.collection('users').doc(uid).set({
         'name': name,
+        'email': email,
         'address': address,
         'blok': blok,
         'no_rumah': noRumah,
-        'role': 'warga',
+        // 'role': 'warga',
+        'role': null,
         'created_at': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -55,47 +58,6 @@ class AuthService {
       debugPrint('Error saat menyimpan data user: $e');
     }
   }
-
-  // Login
-  // Future<User?> loginWithEmail(
-  //   String email,
-  //   String password,
-  //   BuildContext context,
-  // ) async {
-  //   try {
-  //     UserCredential cred = await _auth.signInWithEmailAndPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-
-  //     if (!cred.user!.emailVerified) {
-  //       await _auth.signOut();
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text('Email belum diverifikasi. Silakan cek email anda'),
-  //         ),
-  //       );
-  //       return null;
-  //     }
-
-  //     DocumentSnapshot userDoc =
-  //         await _firestore.collection('users').doc(cred.user!.uid).get();
-
-  //     if (userDoc.exists) {
-  //       String role = userDoc['role'];
-
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => BottomBar(role: role)),
-  //       );
-  //     }
-
-  //     return cred.user;
-  //   } catch (e) {
-  //     debugPrint('Error saat login: $e');
-  //     return null;
-  //   }
-  // }
 
   Future<User?> loginWithEmail(
     String email,
@@ -122,6 +84,15 @@ class AuthService {
           await _firestore.collection('users').doc(cred.user!.uid).get();
 
       if (!userDoc.exists) {
+        return null;
+      }
+
+      final role = userDoc['role'];
+      if (role == null || role == 'pending') {
+        await _auth.signOut();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Akun anda belum disetujui oleh admin')),
+        );
         return null;
       }
 

@@ -209,6 +209,7 @@ class AdminRekapIuran extends StatelessWidget {
                                     false,
                                   ],
                                 ),
+                                SizedBox(height: 10),
                               ],
                             ),
                           ),

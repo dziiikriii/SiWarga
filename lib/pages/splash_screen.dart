@@ -18,15 +18,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     navigateUser();
-
-    // Future.delayed(const Duration(seconds: 2), () {
-    //   if (mounted) {
-    //     Navigator.pushReplacement(
-    //       context,
-    //       MaterialPageRoute(builder: (context) => const FirstOnboarding()),
-    //     );
-    //   }
-    // });
   }
 
   Future<void> navigateUser() async {

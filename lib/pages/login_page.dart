@@ -98,7 +98,35 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Text(
+                //   'Lupa password anda? ',
+                //   style: TextStyle(color: Color(0xFF777777)),
+                // ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    splashFactory: NoSplash.splashFactory,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LupaPassword()),
+                    );
+                  },
+                  child: Text(
+                    'Lupa Password?',
+                    style: TextStyle(color: Color(0xFF184E0E)),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
             SizedBox(
               width: boxWidth,
               child: TextButton(
@@ -179,47 +207,13 @@ class _LoginPageState extends State<LoginPage> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SigninPage()),
                       );
                     },
                     child: Text(
                       'Daftar',
-                      style: TextStyle(color: Color(0xFF184E0E)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Center(
-              // child: Text(
-              //   'Lupa password?',
-              //   style: TextStyle(color: Color(0xFF777777)),
-              //   textAlign: TextAlign.center,
-              // ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Belum punya akun? ',
-                    style: TextStyle(color: Color(0xFF777777)),
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      splashFactory: NoSplash.splashFactory,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LupaPassword()),
-                      );
-                    },
-                    child: Text(
-                      'Lupa Password?',
                       style: TextStyle(color: Color(0xFF184E0E)),
                     ),
                   ),
