@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:si_warga/widgets/default_checkbox.dart';
 
 class BayarTagihanBar extends StatelessWidget {
-  const BayarTagihanBar({super.key});
+  final int total;
+  final int jumlahDipilih;
+  final VoidCallback onBayar;
+  final VoidCallback? onCheckAll;
+  final bool isAllChecked;
+  final ValueChanged<bool?>? onAllCheckedChanged;
+
+  const BayarTagihanBar({
+    super.key,
+    required this.total,
+    required this.jumlahDipilih,
+    required this.onBayar,
+    this.onCheckAll,
+    required this.isAllChecked,
+    required this.onAllCheckedChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +25,9 @@ class BayarTagihanBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            DefaultCheckbox(),
-            Text(
+            Checkbox(value: isAllChecked, onChanged: onAllCheckedChanged),
+            const SizedBox(width: 8),
+            const Text(
               'Bayar Semua',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
@@ -26,7 +41,7 @@ class BayarTagihanBar extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Total :',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
@@ -34,17 +49,17 @@ class BayarTagihanBar extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Rp 150.000',
-                  style: TextStyle(
+                  'Rp $total',
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
                 ),
               ],
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             TextButton(
-              onPressed: () {},
+              onPressed: jumlahDipilih > 0 ? onBayar : null,
               style: TextButton.styleFrom(
                 backgroundColor: const Color(0xFF184E0E),
                 foregroundColor: Colors.white,
@@ -56,8 +71,8 @@ class BayarTagihanBar extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
-                  'Bayar (3)',
-                  style: TextStyle(
+                  'Bayar ($jumlahDipilih)',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),

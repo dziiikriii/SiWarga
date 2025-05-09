@@ -11,7 +11,8 @@ class ChecklistTagihanItem extends StatefulWidget {
     super.key,
     required this.title,
     required this.value,
-    required this.tagihanId, required this.tagihanData,
+    required this.tagihanId,
+    required this.tagihanData,
   });
 
   @override
@@ -47,10 +48,14 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            widget.title,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+          Expanded(
+            child: Text(
+              widget.title,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              softWrap: true,
+            ),
           ),
+          // SizedBox(width: 20),
           Row(
             children: [
               Text(

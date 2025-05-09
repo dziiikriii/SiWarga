@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 
-class DefaultCheckbox extends StatefulWidget {
-  const DefaultCheckbox({super.key});
+class DefaultCheckbox extends StatelessWidget {
+  final bool? value;
+  final Function(bool?)? onChanged;
 
-  @override
-  State<DefaultCheckbox> createState() => _DefaultCheckboxState();
-}
+  const DefaultCheckbox({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
-class _DefaultCheckboxState extends State<DefaultCheckbox> {
-  bool? isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Checkbox(
-      value: isChecked,
-      activeColor: Color(0xFF37672F),
-      onChanged: (newBool) {
-        setState(() {
-          isChecked = newBool;
-        });
-      },
+      value: value,
+      activeColor: const Color(0xFF37672F),
+      onChanged: onChanged,
     );
   }
 }
+

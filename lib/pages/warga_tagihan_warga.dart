@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/bayar_tagihan_bar.dart';
-// import 'package:si_warga/widgets/checklist_tagihan_item.dart';
+import 'package:si_warga/widgets/default_checkbox.dart';
 import 'package:si_warga/widgets/lunas_bar.dart';
 import 'package:si_warga/widgets/year_bar.dart';
 
@@ -15,98 +16,179 @@ class WargaTagihanWarga extends StatefulWidget {
 }
 
 class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
+  final Map<String, bool> _selectedTagihan = {};
+  List<QueryDocumentSnapshot> _tagihanList = [];
+  bool _isLoading = true;
+
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    _fetchTagihan();
+  }
+
+  Future<void> _fetchTagihan() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     final currentUserId = currentUser?.uid;
+
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('tagihan_user')
+            .doc(currentUserId)
+            .collection('items')
+            .orderBy('createdAt', descending: true)
+            .get();
+
+    setState(() {
+      _tagihanList =
+          snapshot.docs.where((doc) => doc['status'] == 'belum bayar').toList();
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int totalTagihan = 0;
+    int jumlahDipilih = 0;
+
+    for (var tagihan in _tagihanList) {
+      final id = tagihan.id;
+      final jumlah = tagihan['jumlah'];
+      if (_selectedTagihan[id] == true) {
+        totalTagihan += (jumlah is int) ? jumlah : (jumlah as num).toInt();
+        jumlahDipilih++;
+      }
+    }
+
+    final formatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+    // String formatted = formatter.format(jumlah); // jumlah = 50000
+
     return Scaffold(
       appBar: AppBarDefault(title: 'Tagihan Iuran Warga'),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              YearBar(),
-              LunasBar(leftText: 'Iuran Bulanan', rightText: ('Iuran Lainnya')),
-              SizedBox(height: 20),
-              Container(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            YearBar(),
+            LunasBar(leftText: 'Iuran Bulanan', rightText: 'Iuran Lainnya'),
+            SizedBox(height: 20),
+            Expanded(
+              child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10,
-                    top: 10,
-                    bottom: 10,
-                    right: 20,
-                  ),
-                  // child: ListView(children: [ ChecklistTagihanItem()]),
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream:
-                        FirebaseFirestore.instance
-                            .collection('tagihan_user')
-                            .doc(currentUserId)
-                            .collection('items')
-                            .orderBy('createdAt', descending: true)
-                            .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
+                  padding: const EdgeInsets.all(10),
+                  child:
+                      _isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : ListView.builder(
+                            itemCount: _tagihanList.length,
+                            itemBuilder: (context, index) {
+                              final tagihan = _tagihanList[index];
+                              final tagihanId = tagihan.id;
+                              final nama = tagihan['nama'] ?? 'Tanpa Nama';
+                              final jumlah = tagihan['jumlah'] ?? 0;
+                              final tenggat = tagihan['tenggat'] ?? '-';
+                              final isChecked =
+                                  _selectedTagihan[tagihanId] ?? false;
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return Text('Belum ada tagihan.');
-                      }
-
-                      final tagihanList = snapshot.data!.docs;
-
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: tagihanList.length,
-                        itemBuilder: (context, index) {
-                          final tagihan = tagihanList[index];
-                          return ListTile(
-                            contentPadding: EdgeInsets.symmetric(vertical: 8),
-                            title: Text(tagihan['nama'] ?? 'Tanpa Nama'),
-                            subtitle: Text(
-                              'Jumlah: Rp${tagihan['jumlah']} \nTenggat: ${tagihan['tenggat']}',
-                            ),
-                            trailing: Text(
-                              tagihan['status'],
-                              style: TextStyle(
-                                color:
-                                    tagihan['status'] == 'belum bayar'
-                                        ? Colors.red
-                                        : Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        DefaultCheckbox(
+                                          value: isChecked,
+                                          onChanged: (newValue) {
+                                            setState(() {
+                                              _selectedTagihan[tagihanId] =
+                                                  newValue ?? false;
+                                            });
+                                          },
+                                        ),
+                                        SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              width:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.width *
+                                                  0.45, // atur lebar agar tidak melebar terus
+                                              child: Text(
+                                                nama,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                softWrap: true,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.visible,
+                                              ),
+                                            ),
+                                            Text(
+                                              tenggat,
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      formatter.format(jumlah).toString(),
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10,
-                    top: 10,
-                    bottom: 10,
-                    right: 10,
-                  ),
-                  child: BayarTagihanBar(),
-                ),
-              ),
-            ],
+            ),
+          ],
+        ),
+      ),
+
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        child: Container(
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: BayarTagihanBar(
+              total: totalTagihan,
+              jumlahDipilih: jumlahDipilih,
+              onBayar: () {
+                // aksi pembayaran
+              },
+              isAllChecked:
+                  _selectedTagihan.length == _tagihanList.length &&
+                  _selectedTagihan.values.every((value) => value),
+              onAllCheckedChanged: (value) {
+                setState(() {
+                  for (var tagihan in _tagihanList) {
+                    _selectedTagihan[tagihan.id] = value ?? false;
+                  }
+                });
+              },
+            ),
           ),
         ),
       ),
