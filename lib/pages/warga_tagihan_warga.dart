@@ -38,9 +38,20 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
             .orderBy('createdAt', descending: true)
             .get();
 
+    final tagihanList =
+        snapshot.docs.where((doc) => doc['status'] == 'belum bayar').toList();
+
+    tagihanList.sort((a, b) {
+      final dateFormat = DateFormat('dd-MM-yyyy');
+      final dateA = dateFormat.parse(a['tenggat']);
+      final dateB = dateFormat.parse(b['tenggat']);
+      return dateA.compareTo(dateB);
+    });
+
     setState(() {
-      _tagihanList =
-          snapshot.docs.where((doc) => doc['status'] == 'belum bayar').toList();
+      _tagihanList = tagihanList;
+      // _tagihanList =
+      //     snapshot.docs.where((doc) => doc['status'] == 'belum bayar').toList();
       _isLoading = false;
     });
   }
@@ -69,20 +80,40 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
     return Scaffold(
       appBar: AppBarDefault(title: 'Tagihan Iuran Warga'),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
             YearBar(),
             LunasBar(leftText: 'Iuran Bulanan', rightText: 'Iuran Lainnya'),
             SizedBox(height: 20),
+
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(20), // Warna shadow
+                      offset: Offset(
+                        4,
+                        4,
+                      ), // Posisi shadow (horizontal, vertical)
+                      blurRadius: 8, // Seberapa buram shadow
+                      spreadRadius: 1, // Seberapa besar shadow menyebar
+                    ),
+                  ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 20,
+                    top: 10,
+                    // bottom: 10,
+                  ),
                   child:
                       _isLoading
                           ? Center(child: CircularProgressIndicator())
@@ -126,7 +157,7 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
                                                   MediaQuery.of(
                                                     context,
                                                   ).size.width *
-                                                  0.45, // atur lebar agar tidak melebar terus
+                                                  0.35, // atur lebar agar tidak melebar terus
                                               child: Text(
                                                 nama,
                                                 style: TextStyle(
@@ -158,38 +189,54 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        child: Container(
-          height: 70,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: BayarTagihanBar(
-              total: totalTagihan,
-              jumlahDipilih: jumlahDipilih,
-              onBayar: () {
-                // aksi pembayaran
-              },
-              isAllChecked:
-                  _selectedTagihan.length == _tagihanList.length &&
-                  _selectedTagihan.values.every((value) => value),
-              onAllCheckedChanged: (value) {
-                setState(() {
-                  for (var tagihan in _tagihanList) {
-                    _selectedTagihan[tagihan.id] = value ?? false;
-                  }
-                });
-              },
+            Container(
+              height: 70,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(20), // Warna shadow
+                    offset: Offset(
+                      4,
+                      4,
+                    ), // Posisi shadow (horizontal, vertical)
+                    blurRadius: 8, // Seberapa buram shadow
+                    spreadRadius: 1, // Seberapa besar shadow menyebar
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: BayarTagihanBar(
+                  total: totalTagihan,
+                  jumlahDipilih: jumlahDipilih,
+                  onBayar: () {
+                    _fetchTagihan();
+                  },
+                  isAllChecked:
+                      _selectedTagihan.length == _tagihanList.length &&
+                      _selectedTagihan.values.every((value) => value),
+                  onAllCheckedChanged: (value) {
+                    setState(() {
+                      for (var tagihan in _tagihanList) {
+                        _selectedTagihan[tagihan.id] = value ?? false;
+                      }
+                    });
+                  },
+                  selectedTagihan:
+                      _tagihanList
+                          .where(
+                            (tagihan) => _selectedTagihan[tagihan.id] == true,
+                          )
+                          .toList(),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

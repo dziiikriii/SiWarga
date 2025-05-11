@@ -5,20 +5,17 @@ class InfoSaldoHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final boxWidth = screenWidth * 0.9;
-
+    
     return Container(
-      width: boxWidth,
       decoration: BoxDecoration(
         color: Color(0xFFECFCEC),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(20), // Warna shadow
-            offset: Offset(4, 4), // Posisi shadow (horizontal, vertical)
-            blurRadius: 8, // Seberapa buram shadow
-            spreadRadius: 1, // Seberapa besar shadow menyebar
+            color: Colors.black.withAlpha(20),
+            offset: Offset(4, 4),
+            blurRadius: 8,
+            spreadRadius: 1,
           ),
         ],
       ),

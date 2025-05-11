@@ -28,7 +28,7 @@ class _RiwayatPembayaranWargaState extends State<RiwayatPembayaranWarga> {
             .collection('tagihan_user')
             .doc(user!.uid)
             .collection('items')
-            .where('status', isEqualTo: 'lunas')
+            .where('status', whereIn: ['lunas', 'menunggu_konfirmasi'])
             // .orderBy('createdAt', descending: true)
             .get();
 
@@ -54,6 +54,17 @@ class _RiwayatPembayaranWargaState extends State<RiwayatPembayaranWarga> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(20), // Warna shadow
+                              offset: Offset(
+                                4,
+                                4,
+                              ), // Posisi shadow (horizontal, vertical)
+                              blurRadius: 8, // Seberapa buram shadow
+                              spreadRadius: 1, // Seberapa besar shadow menyebar
+                            ),
+                          ],
                         ),
                         child: Column(
                           children:
@@ -61,8 +72,11 @@ class _RiwayatPembayaranWargaState extends State<RiwayatPembayaranWarga> {
                                 return RiwayatPembayaranItem(
                                   nama: doc['nama'] ?? 'Tanpa Nama',
                                   tanggal: doc['tenggat'] ?? '-',
-                                  // metode: doc['metode'] ?? 'Tidak diketahui',
-                                  metode: 'Tidak diketahui',
+                                  metode:
+                                      doc['metode_pembayaran'] ??
+                                      'Tidak diketahui',
+                                  // metode: 'Tidak diketahui',
+                                  status: doc['status'],
                                   jumlah: (doc['jumlah'] as num).toInt(),
                                 );
                               }).toList(),

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:si_warga/pages/generate_tagihan_bulanan.dart';
+import 'package:si_warga/pages/konfirmasi_pembayaran_warga.dart';
 import 'package:si_warga/pages/tambah_tagihan.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/checklist_tagihan_item.dart';
@@ -33,7 +35,12 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 10,
+                    bottom: 40,
+                  ),
                   child: StreamBuilder<QuerySnapshot>(
                     stream:
                         FirebaseFirestore.instance
@@ -51,6 +58,7 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                           return ChecklistTagihanItem(
                             title: data['nama'],
                             value: data['jumlah'],
+                            // tenggat: data['tenggat'],
                             tagihanId: data.id,
                             tagihanData: data.data() as Map<String, dynamic>,
                           );
@@ -61,31 +69,46 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                 ),
               ),
             ),
-
-            // FullWidthButton(
-            //   text: 'Edit Tagihan',
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => const LoginPage()),
-            //     );
-            //   },
-            // ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // aksi saat ditekan
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => TambahTagihan()),
-          );
+      floatingActionButton: PopupMenuButton<int>(
+        onSelected: (value) {
+          if (value == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => TambahTagihan()),
+            );
+          } else if (value == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => GenerateTagihanBulanan()),
+            );
+          } else if (value == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => KonfirmasiPembayaranWarga()),
+            );
+          }
         },
-        backgroundColor: Color(0xFF37672F),
-
-        child: Icon(Icons.add, color: Colors.white),
+        itemBuilder:
+            (context) => [
+              PopupMenuItem(value: 1, child: Text('Tambah Tagihan')),
+              PopupMenuItem(value: 2, child: Text('Generate Tagihan')),
+              PopupMenuItem(
+                value: 3,
+                child: Text('Konfirmasi Pembayaran Warga'),
+              ),
+            ],
+        offset: Offset(0, -105), // posisikan di atas FAB
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        icon: FloatingActionButton(
+          onPressed: null, // disable klik langsung
+          backgroundColor: Color(0xFF37672F),
+          child: Icon(Icons.more_vert, color: Colors.white),
+        ),
       ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

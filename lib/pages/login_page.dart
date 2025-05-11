@@ -29,9 +29,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final boxWidth = screenWidth * 0.9;
-
     return Scaffold(
       backgroundColor: const Color(0xFFECFCEC),
       body: Padding(
@@ -128,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             SizedBox(
-              width: boxWidth,
+              width: double.infinity,
               child: TextButton(
                 onPressed: () async {
                   final email = emailController.text.trim();

@@ -22,9 +22,6 @@ class _SigninPageState extends State<SigninPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final boxWidth = screenWidth * 0.9;
-
     return Scaffold(
       backgroundColor: const Color(0xFFECFCEC),
       body: SingleChildScrollView(
@@ -73,7 +70,7 @@ class _SigninPageState extends State<SigninPage> {
               DefaultInputPassword(controller: passwordController),
               SizedBox(height: 30),
               SizedBox(
-                width: boxWidth,
+                width: double.infinity,
                 child: TextButton(
                   onPressed: () async {
                     final email = emailController.text.trim();

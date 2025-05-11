@@ -6,6 +6,7 @@ class RiwayatPembayaranItem extends StatelessWidget {
   final String tanggal;
   final String metode;
   final int jumlah;
+  final String status;
 
   const RiwayatPembayaranItem({
     super.key,
@@ -13,6 +14,7 @@ class RiwayatPembayaranItem extends StatelessWidget {
     required this.tanggal,
     required this.metode,
     required this.jumlah,
+    required this.status,
   });
 
   @override
@@ -22,6 +24,7 @@ class RiwayatPembayaranItem extends StatelessWidget {
       symbol: 'Rp ',
       decimalDigits: 0,
     );
+    final statusColor = status == 'lunas' ? Colors.green : Colors.orange;
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -79,10 +82,10 @@ class RiwayatPembayaranItem extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      'Lunas',
+                      status,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xFF777777),
+                        color: statusColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
