@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/widgets/blok_bar_item.dart';
 
 class BlokBar extends StatefulWidget {
-  const BlokBar({super.key});
+  final ValueChanged<String>? onBlokSelected;
+
+  const BlokBar({super.key, this.onBlokSelected});
 
   @override
   State<BlokBar> createState() => _BlokBarState();
@@ -11,14 +14,42 @@ class BlokBar extends StatefulWidget {
 class _BlokBarState extends State<BlokBar> {
   int selectedIndex = 0;
 
-  final List<Map<String, String>> blokList = [
-    {'blok': 'Blok A', 'warga': '10 Warga'},
-    {'blok': 'Blok B', 'warga': '5 Warga'},
-    {'blok': 'Blok C', 'warga': '8 Warga'},
-    {'blok': 'Blok D', 'warga': '7 Warga'},
-    {'blok': 'Blok E', 'warga': '9 Warga'},
-    {'blok': 'Blok F', 'warga': '11 Warga'},
+  List<Map<String, String>> blokList = [
+    {'label': 'Blok A', 'value': 'A', 'warga': ''},
+    {'label': 'Blok B', 'value': 'B', 'warga': ''},
+    {'label': 'Blok C', 'value': 'C', 'warga': ''},
+    {'label': 'Blok D', 'value': 'D', 'warga': ''},
+    {'label': 'Blok E', 'value': 'E', 'warga': ''},
+    {'label': 'Blok F', 'value': 'F', 'warga': ''},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchJumlahWargaPerBlok();
+  }
+
+  void fetchJumlahWargaPerBlok() async {
+    for (int i = 0; i < blokList.length; i++) {
+      String blokValue = blokList[i]['value'] ?? '';
+      int count = await getJumlahWarga(blokValue);
+
+      setState(() {
+        blokList[i]['warga'] = '$count Warga';
+      });
+    }
+  }
+
+  Future<int> getJumlahWarga(String blok) async {
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .where('role', isEqualTo: 'warga')
+            .where('blok', isEqualTo: blok)
+            .get();
+
+    return snapshot.docs.length;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +60,22 @@ class _BlokBarState extends State<BlokBar> {
         itemCount: blokList.length,
         itemBuilder: (context, index) {
           final item = blokList[index];
+
+          final String label = item['label'] ?? '';
+          final String value = item['value'] ?? '';
+          final String warga = item['warga'] ?? '';
+
           return BlokBarItem(
-            blok: item['blok']!,
-            warga: item['warga']!,
+            blok: label,
+            warga: warga,
             isSelected: selectedIndex == index,
-            onTap: () => setState(() => selectedIndex = index),
+            onTap: () {
+              setState(() => selectedIndex = index);
+              // if (widget.onBlokSelected != null) {
+              //   widget.onBlokSelected!(item['value']!);
+              // }
+              widget.onBlokSelected?.call(value);
+            },
           );
         },
       ),
