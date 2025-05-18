@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:si_warga/pages/tambah_pemasukan.dart';
 import 'package:si_warga/pages/tambah_pengeluaran.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/header_laporan_keuangan.dart';
-import 'package:si_warga/widgets/pengeluaran_pemasukan_button.dart';
+// import 'package:si_warga/widgets/pengeluaran_pemasukan_button.dart';
 import 'package:si_warga/widgets/pengeluaran_pemasukan_item.dart';
 import 'package:si_warga/widgets/year_bar.dart';
 
@@ -18,10 +19,14 @@ class LaporanKeuangan extends StatefulWidget {
 
 class _LaporanKeuanganState extends State<LaporanKeuangan> {
   String? role;
+  DateTime selectedDate = DateTime.now();
+  late Future<Map<String, dynamic>> laporanFuture;
+
   @override
   void initState() {
     super.initState();
     fetchUserRole();
+    laporanFuture = fetchLaporan(selectedDate);
   }
 
   Future<void> fetchUserRole() async {
@@ -35,6 +40,68 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
     }
   }
 
+  Future<Map<String, dynamic>> fetchLaporan(DateTime date) async {
+    // final now = DateTime.now();
+    final tahunBulan = '${date.year}-${DateFormat('MMMM').format(date)}';
+    final docRef = FirebaseFirestore.instance
+        .collection('laporan_keuangan')
+        .doc(tahunBulan);
+
+    int saldoAwal = 0;
+
+    final previousMonth = DateTime(date.year, date.month - 1);
+    final prevTahunBulan =
+        '${previousMonth.year}-${DateFormat('MMMM').format(previousMonth)}';
+    final prevDocSnapshot =
+        await FirebaseFirestore.instance
+            .collection('laporan_keuangan')
+            .doc(prevTahunBulan)
+            .get();
+    if (prevDocSnapshot.exists &&
+        prevDocSnapshot.data()!.containsKey('saldoAkhir')) {
+      saldoAwal = (prevDocSnapshot.data()!['saldoAkhir'] as num).toInt();
+    }
+
+    // Ambil data pemasukan dan pengeluaran
+    int totalPemasukan = 0;
+    int totalPengeluaran = 0;
+
+    final pemasukanSnapshot = await docRef.collection('pemasukan').get();
+    final pengeluaranSnapshot = await docRef.collection('pengeluaran').get();
+
+    final pemasukanList =
+        pemasukanSnapshot.docs.map((doc) {
+          final data = doc.data();
+          totalPemasukan += (data['jumlah'] as num).toInt();
+          return {'nama': data['nama'], 'jumlah': data['jumlah']};
+        }).toList();
+
+    final pengeluaranList =
+        pengeluaranSnapshot.docs.map((doc) {
+          final data = doc.data();
+          totalPengeluaran += (data['jumlah'] as num).toInt();
+          return {'nama': data['nama'], 'jumlah': data['jumlah']};
+        }).toList();
+
+    final saldoAkhir = saldoAwal + totalPemasukan - totalPengeluaran;
+
+    // Simpan saldoAwal dan saldoAkhir ke dokumen bulan ini
+    await docRef.set({
+      'saldoAwal': saldoAwal,
+      'saldoAkhir': saldoAkhir,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+
+    return {
+      'saldoAwal': saldoAwal,
+      'pemasukan': pemasukanList,
+      'totalPemasukan': totalPemasukan,
+      'pengeluaran': pengeluaranList,
+      'totalPengeluaran': totalPengeluaran,
+      'saldoAkhir': saldoAkhir,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,103 +111,98 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              YearBar(),
-              SizedBox(height: 20),
+              YearBar(
+                selectedDate: selectedDate,
+                onDateChanged: (newDate) {
+                  setState(() {
+                    selectedDate = newDate;
+                    laporanFuture = fetchLaporan(selectedDate);
+                  });
+                },
+              ),
+
+              // SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: Column(
-                    children: [
-                      HeaderLaporanKeuangan(title: 'Saldo Kas Awal'),
-                      PengeluaranPemasukanItem(
-                        name: 'Total Saldo Awal Maret 2025',
-                        value: 25000000,
-                      ),
-                      HeaderLaporanKeuangan(title: 'Pemasukan dan Pengeluaran'),
-                      PengeluaranPemasukanButton(text: 'Pemasukan'),
-                      PengeluaranPemasukanItem(
-                        name: 'Iuran Warga',
-                        value: 5000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Sumbangan Warga',
-                        value: 2500000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Total Pemasukan',
-                        value: 7500000,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF184E0E),
-                      ),
-                      PengeluaranPemasukanButton(text: 'Pengeluaran'),
-                      PengeluaranPemasukanItem(
-                        name: 'Gaji Pokok Satpam RT',
-                        value: 5000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Acara Buka Bersama',
-                        value: 2500000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Semen',
-                        value: 1500000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Pembelian Pasir',
-                        value: 2000000,
-                      ),
-                      PengeluaranPemasukanItem(
-                        name: 'Total Pengeluaran',
-                        value: 11000000,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF184E0E),
-                      ),
-                      HeaderLaporanKeuangan(title: 'Saldo Kas Akhir'),
-                      PengeluaranPemasukanItem(
-                        name: 'Total Saldo Akhir Maret 2025',
-                        value: 21500000,
-                      ),
-                    ],
+                  child: FutureBuilder<Map<String, dynamic>>(
+                    future: laporanFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (!snapshot.hasData || snapshot.hasError) {
+                        return Text('Gagal memuat laporan');
+                      }
+
+                      final data = snapshot.data!;
+                      final pemasukan = data['pemasukan'] as List;
+                      final pengeluaran = data['pengeluaran'] as List;
+
+                      return Column(
+                        children: [
+                          // YearBar(),
+                          SizedBox(height: 20),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Column(
+                                children: [
+                                  HeaderLaporanKeuangan(
+                                    title: 'Saldo Kas Awal',
+                                  ),
+                                  PengeluaranPemasukanItem(
+                                    name: 'Saldo Awal',
+                                    value: data['saldoAwal'],
+                                  ),
+                                  HeaderLaporanKeuangan(title: 'Pemasukan'),
+                                  ...pemasukan.map(
+                                    (item) => PengeluaranPemasukanItem(
+                                      name: item['nama'],
+                                      value: item['jumlah'],
+                                    ),
+                                  ),
+                                  PengeluaranPemasukanItem(
+                                    name: 'Total Pemasukan',
+                                    value: data['totalPemasukan'],
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF184E0E),
+                                  ),
+                                  HeaderLaporanKeuangan(title: 'Pengeluaran'),
+                                  ...pengeluaran.map(
+                                    (item) => PengeluaranPemasukanItem(
+                                      name: item['nama'],
+                                      value: item['jumlah'],
+                                    ),
+                                  ),
+                                  PengeluaranPemasukanItem(
+                                    name: 'Total Pengeluaran',
+                                    value: data['totalPengeluaran'],
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF184E0E),
+                                  ),
+                                  HeaderLaporanKeuangan(
+                                    title: 'Saldo Kas Akhir',
+                                  ),
+                                  PengeluaranPemasukanItem(
+                                    name: 'Saldo Akhir',
+                                    value: data['saldoAkhir'],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -151,17 +213,23 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
       floatingActionButton:
           role == 'admin'
               ? PopupMenuButton<int>(
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == 1) {
-                    Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => TambahPemasukan()),
                     );
+                    setState(() {
+                      laporanFuture = fetchLaporan(selectedDate);
+                    });
                   } else if (value == 2) {
-                    Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => TambahPengeluaran()),
                     );
+                    setState(() {
+                      laporanFuture = fetchLaporan(selectedDate);
+                    });
                   }
                 },
                 itemBuilder:

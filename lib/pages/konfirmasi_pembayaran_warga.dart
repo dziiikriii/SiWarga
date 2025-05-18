@@ -176,9 +176,7 @@ class _KonfirmasiPembayaranWargaState extends State<KonfirmasiPembayaranWarga> {
                                 fetchPendingTagihan();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(
-                                      'Berhasil menyetujui tagihan',
-                                    ),
+                                    content: Text('Berhasil menolak tagihan'),
                                   ),
                                 );
                               },

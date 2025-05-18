@@ -1,25 +1,40 @@
 import 'package:flutter/material.dart';
 
-class ChecklistRekap extends StatelessWidget {
-  final bool condition;
-  const ChecklistRekap({super.key, required this.condition});
+class ChecklistRekap extends StatefulWidget {
+  final bool initialCondition;
+  const ChecklistRekap({super.key, required this.initialCondition});
+
+  @override
+  State<ChecklistRekap> createState() => _ChecklistRekapState();
+}
+
+class _ChecklistRekapState extends State<ChecklistRekap> {
+  late bool condition;
+
+  @override
+  void initState() {
+    super.initState();
+    condition = widget.initialCondition;
+  }
+
+  void toggleCondition() {
+    setState(() {
+      condition = !condition;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // return Container(
-    //   decoration: BoxDecoration(
-    //     color: Color.fromARGB(255, 173, 235, 148),
-    //     borderRadius: BorderRadius.circular(20)
-    //   ),
-    //   child: Icon(Icons.check_circle_rounded),
-    // );
     return condition
         ? Padding(
           padding: const EdgeInsets.symmetric(horizontal: 7),
-          child: Icon(
-            Icons.check_circle_rounded,
-            color: Color.fromARGB(255, 113, 213, 73),
-            size: 30,
+          child: InkWell(
+            onTap: toggleCondition,
+            child: Icon(
+              Icons.check_circle_rounded,
+              color: Color.fromARGB(255, 113, 213, 73),
+              size: 30,
+            ),
           ),
         )
         : Padding(
@@ -31,7 +46,10 @@ class ChecklistRekap extends StatelessWidget {
               color: Color.fromARGB(255, 217, 42, 42),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Icon(Icons.close_rounded, color: Colors.white, size: 25),
+            child: InkWell(
+              onTap: toggleCondition,
+              child: Icon(Icons.close_rounded, color: Colors.white, size: 25),
+            ),
           ),
         );
   }

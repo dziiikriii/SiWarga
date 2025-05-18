@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/kelola_warga.dart';
+import 'package:si_warga/pages/notifikasi.dart';
 import 'package:si_warga/widgets/halo_user.dart';
 import 'package:si_warga/widgets/info_saldo_home.dart';
-import 'package:si_warga/widgets/year_bar.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -55,19 +55,20 @@ class Homepage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.notifications_none,
-                                size: 35,
-                                color: Color(0xFF184E0E),
-                              ),
-                              Icon(
-                                Icons.settings_outlined,
-                                size: 35,
-                                color: Color(0xFF184E0E),
-                              ),
-                            ],
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const Notifikasi(),
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.notifications_none,
+                              size: 35,
+                              color: Color(0xFF184E0E),
+                            ),
                           ),
                         ],
                       ),
@@ -127,7 +128,7 @@ class Homepage extends StatelessWidget {
             SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: YearBar(),
+              // child: YearBar(),
             ),
             SizedBox(height: 20),
             Center(child: Image.asset('lib/assets/graph.png')),

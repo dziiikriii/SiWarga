@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class AppBarDefault extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool showBackButton;
+  final List<Widget>? actions;
 
   const AppBarDefault({
     super.key,
     required this.title,
-    this.showBackButton = true,
+    this.showBackButton = true, 
+    this.actions,
   });
 
   @override
@@ -28,6 +30,7 @@ class AppBarDefault extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
+      actions: actions,
     );
   }
 

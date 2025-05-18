@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:si_warga/widgets/halo_user.dart';
 import 'package:si_warga/widgets/info_saldo_home.dart';
-import 'package:si_warga/widgets/year_bar.dart';
 
 class HomepageWarga extends StatelessWidget {
   const HomepageWarga({super.key});
@@ -126,7 +125,7 @@ class HomepageWarga extends StatelessWidget {
             SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: YearBar(),
+              // child: YearBar(),
             ),
             SizedBox(height: 20),
             Center(child: Image.asset('lib/assets/graph.png')),

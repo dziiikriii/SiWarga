@@ -8,13 +8,14 @@ class ChecklistTagihanItem extends StatefulWidget {
   final int value;
   final String tagihanId;
   final Map<String, dynamic> tagihanData;
-  // final String tenggat;
+  final String tenggat;
   const ChecklistTagihanItem({
     super.key,
     required this.title,
     required this.value,
     required this.tagihanId,
     required this.tagihanData,
+    required this.tenggat,
     // required this.tenggat,
   });
 
@@ -50,115 +51,115 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
     decimalDigits: 0,
   );
 
-  // late final String formattedTenggat;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   formattedTenggat = _formatTenggat(widget.tenggat);
-  // }
-
-  // String _formatTenggat(dynamic tenggat) {
-  //   try {
-  //     if (tenggat is Timestamp) {
-  //       return DateFormat('dd MMM yyyy').format(tenggat.toDate());
-  //     } else if (tenggat is String) {
-  //       final parsedDate = DateTime.parse(tenggat);
-  //       return DateFormat('dd MMM yyyy').format(parsedDate);
-  //     } else if (tenggat is DateTime) {
-  //       return DateFormat('dd MMM yyyy').format(tenggat);
-  //     } else {
-  //       return '-';
-  //     }
-  //   } catch (e) {
-  //     return '-';
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
+    DateTime? tenggatDate = DateFormat(
+      'dd-MM-yyyy',
+    ).parse(widget.tenggat, true);
+    String formattedTenggat = DateFormat(
+      'dd MMMM yyyy',
+      'id_ID',
+    ).format(tenggatDate);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              widget.title,
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              softWrap: true,
-            ),
-          ),
-          // SizedBox(width: 20),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                // widget.value.toString(),
-                formatter.format(widget.value),
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              ),
-              SizedBox(width: 10),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => EditTagihan(
-                            tagihanId: widget.tagihanId,
-                            tagihanData: widget.tagihanData,
-                          ),
-                    ),
-                  );
-                },
-                child: Icon(Icons.edit_rounded, color: Colors.orange, size: 28),
-              ),
-              SizedBox(width: 10),
-              GestureDetector(
-                onTap: () async {
-                  // await hapusTagihan(widget.tagihanId);
-                  final confirmDelete = await showDialog<bool>(
-                    context: context,
-                    builder:
-                        (context) => AlertDialog(
-                          title: Text('Konfirmasi Hapus Tagihan'),
-                          content: Text(
-                            'Apakah Anda yakin ingin menghapus tagihan?',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: Text(
-                                'Batal',
-                                style: TextStyle(color: Color(0xFF777777)),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // hapusTagihan(widget.tagihanId);
-                                Navigator.of(context).pop(true);
-                              },
-                              child: Text(
-                                'Hapus',
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 42, 42),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                  );
-                  if (confirmDelete == true) {
-                    await hapusTagihan(widget.tagihanId);
-                  }
-                },
-                child: Icon(
-                  Icons.delete_outline_rounded,
-                  color: Colors.red,
-                  size: 28,
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  softWrap: true,
                 ),
               ),
+              Row(
+                children: [
+                  Text(
+                    formatter.format(widget.value),
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  ),
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => EditTagihan(
+                                tagihanId: widget.tagihanId,
+                                tagihanData: widget.tagihanData,
+                              ),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.edit_rounded,
+                      color: Colors.orange,
+                      size: 28,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () async {
+                      final confirmDelete = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: Text('Konfirmasi Hapus Tagihan'),
+                              content: Text(
+                                'Apakah Anda yakin ingin menghapus tagihan?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(false),
+                                  child: Text(
+                                    'Batal',
+                                    style: TextStyle(color: Color(0xFF777777)),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  child: Text(
+                                    'Hapus',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 255, 42, 42),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      );
+                      if (confirmDelete == true) {
+                        await hapusTagihan(widget.tagihanId);
+                      }
+                    },
+                    child: Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.red,
+                      size: 28,
+                    ),
+                  ),
+                ],
+              ),
             ],
+          ),
+          SizedBox(height: 4),
+          Text(
+            'Tenggat: $formattedTenggat',
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),

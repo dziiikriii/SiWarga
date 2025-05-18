@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/bayar_tagihan_bar.dart';
 import 'package:si_warga/widgets/default_checkbox.dart';
-import 'package:si_warga/widgets/lunas_bar.dart';
-import 'package:si_warga/widgets/year_bar.dart';
 
 class WargaTagihanWarga extends StatefulWidget {
   const WargaTagihanWarga({super.key});
@@ -83,8 +81,8 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
-            YearBar(),
-            LunasBar(leftText: 'Iuran Bulanan', rightText: 'Iuran Lainnya'),
+            // YearBar(),
+            // LunasBar(leftText: 'Iuran Bulanan', rightText: 'Iuran Lainnya'),
             SizedBox(height: 20),
 
             Expanded(

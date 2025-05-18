@@ -89,7 +89,7 @@ class MetodePembayaranState extends State<MetodePembayaran> {
     final filePath = 'public/$fileName';
 
     try {
-      final response = await supabase.storage
+      await supabase.storage
           .from('buktipembayaran')
           .upload(filePath, imageFile);
 

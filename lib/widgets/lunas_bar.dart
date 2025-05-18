@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 class LunasBar extends StatefulWidget {
   final String leftText;
   final String rightText;
-  const LunasBar({super.key, required this.leftText, required this.rightText});
+  final Function(int) onTabChanged;
+  const LunasBar({
+    super.key,
+    required this.leftText,
+    required this.rightText,
+    required this.onTabChanged,
+  });
 
   @override
   State<LunasBar> createState() => _LunasBarState();
@@ -16,6 +22,7 @@ class _LunasBarState extends State<LunasBar> {
     setState(() {
       selectedIndex = index;
     });
+    widget.onTabChanged(index);
     // Navigator.push(
     //   context,
     //   MaterialPageRoute(builder: (context) => const LoginPage()),

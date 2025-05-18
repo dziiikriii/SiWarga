@@ -6,7 +6,6 @@ import 'package:si_warga/pages/tambah_tagihan.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/checklist_tagihan_item.dart';
 import 'package:si_warga/widgets/lunas_bar.dart';
-import 'package:si_warga/widgets/year_bar.dart';
 
 class AdminTagihanWarga extends StatefulWidget {
   const AdminTagihanWarga({super.key});
@@ -16,17 +15,27 @@ class AdminTagihanWarga extends StatefulWidget {
 }
 
 class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDefault(title: 'Tagihan Iuran Warga'),
       body: Padding(
-        padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+        padding: EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
             SizedBox(height: 20),
-            YearBar(),
-            LunasBar(leftText: 'Iuran Bulanan', rightText: ('Iuran Lainnya')),
+            // YearBar(),
+            LunasBar(
+              leftText: 'Iuran Bulanan',
+              rightText: ('Iuran Lainnya'),
+              onTabChanged: (index) {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+            ),
             SizedBox(height: 20),
             Expanded(
               child: Container(
@@ -45,6 +54,13 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                     stream:
                         FirebaseFirestore.instance
                             .collection('tagihan')
+                            .where(
+                              'tipe',
+                              isEqualTo:
+                                  selectedIndex == 0
+                                      ? 'Iuran Bulanan'
+                                      : 'Iuran Lainnya',
+                            )
                             .orderBy('createdAt', descending: true)
                             .snapshots(),
                     builder: (context, snapshot) {
@@ -58,7 +74,7 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                           return ChecklistTagihanItem(
                             title: data['nama'],
                             value: data['jumlah'],
-                            // tenggat: data['tenggat'],
+                            tenggat: data['tenggat'],
                             tagihanId: data.id,
                             tagihanData: data.data() as Map<String, dynamic>,
                           );

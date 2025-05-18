@@ -23,7 +23,7 @@ class RekapPerWarga extends StatelessWidget {
             child: LogoWarga(kode: kodeWarga),
           ),
           ...kondisiChecklist.map(
-            (condition) => ChecklistRekap(condition: condition),
+            (condition) => ChecklistRekap(initialCondition: false),
           ),
           SizedBox(width: 10),
         ],

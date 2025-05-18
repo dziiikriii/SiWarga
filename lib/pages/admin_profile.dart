@@ -67,7 +67,58 @@ class _AdminProfileState extends State<AdminProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarDefault(title: 'Detail Akun'),
+      appBar: AppBarDefault(
+        title: 'Detail Akun',
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final shouldLogout = await showDialog<bool>(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      title: Text(
+                        'Konfirmasi Logout',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                        ),
+                      ),
+                      content: Text('Apakah Anda yakin ingin logout?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            'Batal',
+                            style: TextStyle(color: Color(0xFF777777)),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text(
+                            'Logout',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 255, 42, 42),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+              );
+
+              if (shouldLogout == true) {
+                await AuthService().logout();
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  (Route<dynamic> route) => false,
+                );
+              }
+            },
+            icon: Icon(Icons.logout_rounded),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(
@@ -139,6 +190,7 @@ class _AdminProfileState extends State<AdminProfile> {
             SizedBox(height: 20),
             FullWidthButton(
               text: 'Tambah Admin',
+              color: Color(0xFF749C6C),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -147,48 +199,6 @@ class _AdminProfileState extends State<AdminProfile> {
               },
             ),
             SizedBox(height: 20),
-            FullWidthButton(
-              text: 'Logout',
-              onPressed: () async {
-                final shouldLogout = await showDialog<bool>(
-                  context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: Text('Konfirmasi Logout'),
-                        content: Text('Apakah Anda yakin ingin logout?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: Text(
-                              'Batal',
-                              style: TextStyle(color: Color(0xFF777777)),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            child: Text(
-                              'Logout',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 42, 42),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                );
-
-                if (shouldLogout == true) {
-                  await AuthService().logout();
-
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                    (Route<dynamic> route) => false,
-                  );
-                }
-              },
-              color: Color.fromARGB(255, 255, 42, 42),
-            ),
           ],
         ),
       ),
