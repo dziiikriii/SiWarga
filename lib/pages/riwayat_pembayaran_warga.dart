@@ -74,7 +74,7 @@ class _RiwayatPembayaranWargaState extends State<RiwayatPembayaranWarga> {
                                   tanggal: doc['tenggat'] ?? '-',
                                   metode:
                                       doc['metode_pembayaran'] ??
-                                      'Tidak diketahui',
+                                      'cash',
                                   // metode: 'Tidak diketahui',
                                   status: doc['status'],
                                   jumlah: (doc['jumlah'] as num).toInt(),

@@ -16,8 +16,69 @@ class AdminRekapIuran extends StatefulWidget {
 class _AdminRekapIuranState extends State<AdminRekapIuran> {
   DateTime selectedDate = DateTime.now();
   String selectedBlok = 'A';
+
+  Stream<List<bool>> getStatusIuranWargaStream({
+    required String userId,
+    required int tahun,
+  }) {
+    final bulanList = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+
+    return FirebaseFirestore.instance
+        .collection('tagihan_user')
+        .doc(userId)
+        .collection('items')
+        .where('tipe', isEqualTo: 'Iuran Bulanan')
+        .where('status', isEqualTo: 'lunas')
+        .snapshots()
+        .map((snapshot) {
+          final List<bool> checklist = List.filled(12, false);
+
+          for (var doc in snapshot.docs) {
+            final nama = doc['nama']?.toString() ?? '';
+            // final tanggal = doc['tanggal_bayar'];
+            final tanggal = doc['tenggat']?.toString();
+
+            if (tanggal != null && tanggal.isNotEmpty) {
+              try {
+                final date = DateTime.parse(
+                  tanggal.split('-').reversed.join('-'),
+                );
+                if (date.year == tahun) {
+                  for (int i = 0; i < 12; i++) {
+                    final namaBulan = bulanList[i];
+                    if (nama.contains(namaBulan)) {
+                      checklist[i] = true;
+                    }
+                  }
+                }
+              } catch (e) {
+                debugPrint('Format tenggat tidak valid: $tanggal');
+              }
+            }
+          }
+
+          debugPrint('Checklist untuk $userId : $checklist');
+          return checklist;
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tahun = selectedDate.year;
+
     return Scaffold(
       appBar: AppBarDefault(title: 'Rekap Iuran Warga'),
       body: Padding(
@@ -76,6 +137,7 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
                                   children:
                                       docs.map((doc) {
                                         // final kodeWarga = doc['role'] ?? '??';
+                                        final userId = doc.id;
                                         final namaWarga = doc['name'] ?? '';
                                         final noRumah = doc['no_rumah'] ?? '';
                                         // final displayKode = '$kodeWarga - ${namaWarga.substring(0, 3)}';
@@ -83,14 +145,42 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
                                             '${namaWarga.substring(0, 3)}-$noRumah';
 
                                         // Dummy checklist, bisa diganti pakai tagihan firebase
-                                        final kondisiChecklist = List.generate(
-                                          12,
-                                          (i) => false,
-                                        );
+                                        // final kondisiChecklist = List.generate(
+                                        //   12,
+                                        //   (i) => false,
+                                        // );
 
-                                        return RekapPerWarga(
-                                          kodeWarga: displayKode,
-                                          kondisiChecklist: kondisiChecklist,
+                                        return StreamBuilder<List<bool>>(
+                                          key: ValueKey(userId),
+                                          stream: getStatusIuranWargaStream(
+                                            userId: userId,
+                                            tahun: tahun,
+                                          ),
+                                          builder: (context, snapshot) {
+                                            debugPrint(
+                                              'Membangun rekap untuk $userId',
+                                            );
+                                            if (!snapshot.hasData) {
+                                              return const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                ),
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            }
+
+                                            final kondisiChecklist =
+                                                snapshot.data!;
+
+                                            return RekapPerWarga(
+                                              kodeWarga: displayKode,
+                                              kondisiChecklist:
+                                                  kondisiChecklist,
+                                              namaWarga: namaWarga,
+                                              userId: userId,
+                                            );
+                                          },
                                         );
                                       }).toList(),
                                 );
