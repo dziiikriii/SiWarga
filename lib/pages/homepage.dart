@@ -1,11 +1,87 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/kelola_warga.dart';
 import 'package:si_warga/pages/notifikasi.dart';
+import 'package:si_warga/services/notification_service.dart';
+import 'package:si_warga/widgets/grafik_keuangan.dart';
 import 'package:si_warga/widgets/halo_user.dart';
 import 'package:si_warga/widgets/info_saldo_home.dart';
 
-class Homepage extends StatelessWidget {
+class Homepage extends StatefulWidget {
   const Homepage({super.key});
+
+  @override
+  State<Homepage> createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  @override
+  void initState() {
+    super.initState();
+    // _listenPembayaranBaru();
+    _cekDanPasangListener();
+    saveAdminToken();
+  }
+
+  Future<void> saveAdminToken() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'fcmToken': fcmToken});
+      }
+    }
+  }
+
+  void _listenSemuaPembayaran() {
+    FirebaseFirestore.instance.collection('tagihan_user').get().then((
+      userDocs,
+    ) {
+      for (var userDoc in userDocs.docs) {
+        FirebaseFirestore.instance
+            .collection('tagihan_user')
+            .doc(userDoc.id)
+            .collection('items')
+            .where('status', isEqualTo: 'menunggu_konfirmasi')
+            .snapshots()
+            .listen((snapshot) {
+              for (var doc in snapshot.docChanges) {
+                if (doc.type == DocumentChangeType.added ||
+                    doc.type == DocumentChangeType.modified) {
+                  final data = doc.doc.data();
+                  final metode = data?['metode_pembayaran'] ?? '';
+                  final uid = userDoc.id;
+
+                  NotificationService.showNotification(
+                    id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                    title: 'Pembayaran Masuk',
+                    body:
+                        'Pembayaran baru oleh $uid dengan metode $metode perlu dikonfirmasi.',
+                  );
+                }
+              }
+            });
+      }
+    });
+  }
+
+  void _cekDanPasangListener() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final role = userDoc.data()?['role'];
+
+    if (role == 'admin') {
+      _listenSemuaPembayaran();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +207,21 @@ class Homepage extends StatelessWidget {
               // child: YearBar(),
             ),
             SizedBox(height: 20),
-            Center(child: Image.asset('lib/assets/graph.png')),
+
+            // Center(child: Image.asset('lib/assets/graph.png')),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     print("Tombol ditekan, mencoba kirim notifikasi...");
+            //     await NotificationService.showNotification(
+            //       id: 1,
+            //       title: "Tes Notifikasi",
+            //       body: "Ini adalah notifikasi percobaan.",
+            //     );
+            //     print("showNotification selesai");
+            //   },
+            //   child: Text("Kirim Notifikasi"),
+            // ),
+            GrafikKeuangan(),
             SizedBox(height: 20),
             Center(
               child: Text(

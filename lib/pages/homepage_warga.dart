@@ -53,19 +53,10 @@ class HomepageWarga extends StatelessWidget {
                               ),
                             ],
                           ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.notifications_none,
-                                size: 35,
-                                color: Color(0xFF184E0E),
-                              ),
-                              Icon(
-                                Icons.settings_outlined,
-                                size: 35,
-                                color: Color(0xFF184E0E),
-                              ),
-                            ],
+                          Icon(
+                            Icons.notifications_none,
+                            size: 35,
+                            color: Color(0xFF184E0E),
                           ),
                         ],
                       ),
@@ -80,41 +71,6 @@ class HomepageWarga extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20),
-                      // TextButton(
-                      //   onPressed: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (context) => const AdminTagihanWarga(),
-                      //       ),
-                      //     );
-                      //   },
-                      //   style: TextButton.styleFrom(
-                      //     backgroundColor: const Color(0xFF184E0E),
-                      //     foregroundColor: Colors.white,
-                      //     padding: const EdgeInsets.symmetric(vertical: 12),
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //   ),
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.symmetric(horizontal: 20),
-                      //     child: Row(
-                      //       mainAxisSize: MainAxisSize.min,
-                      //       children: const [
-                      //         Text(
-                      //           'Kelola Warga',
-                      //           style: TextStyle(
-                      //             fontSize: 16,
-                      //             fontWeight: FontWeight.bold,
-                      //           ),
-                      //         ),
-                      //         SizedBox(width: 10),
-                      //         Icon(Icons.arrow_forward_rounded, size: 25),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
                       SizedBox(height: 50),
                       InfoSaldoHome(),
                     ],

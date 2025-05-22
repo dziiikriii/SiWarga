@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:si_warga/services/notification_service.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/full_width_button.dart';
 import 'package:path/path.dart' as path;
@@ -57,14 +58,6 @@ class MetodePembayaranState extends State<MetodePembayaran> {
       }
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Pembayaran sudah diteruskan ke bendahara untuk konrfirmasi',
-        ),
-      ),
-    );
-
     for (var tagihan in widget.selectedTagihan) {
       final tagihanId = tagihan.id;
       await FirebaseFirestore.instance
@@ -79,6 +72,22 @@ class MetodePembayaranState extends State<MetodePembayaran> {
             'tanggal_bayar': DateTime.now(),
           });
     }
+
+    await NotificationService.showNotification(
+      id: 1001,
+      title: 'Konfirmasi Pembayaran Diperlukan',
+      body: 'Ada pembayaran dari warga yang perlu dikonfirmasi.',
+    );
+
+    
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Pembayaran sudah diteruskan ke bendahara untuk konrfirmasi',
+        ),
+      ),
+    );
 
     Navigator.pop(context, 'success');
   }

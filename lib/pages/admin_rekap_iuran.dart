@@ -151,7 +151,7 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
                                         // );
 
                                         return StreamBuilder<List<bool>>(
-                                          key: ValueKey(userId),
+                                          key: ValueKey('${userId}_$tahun'),
                                           stream: getStatusIuranWargaStream(
                                             userId: userId,
                                             tahun: tahun,

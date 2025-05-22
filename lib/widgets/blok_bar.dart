@@ -34,6 +34,8 @@ class _BlokBarState extends State<BlokBar> {
       String blokValue = blokList[i]['value'] ?? '';
       int count = await getJumlahWarga(blokValue);
 
+      if (!mounted) return;
+
       setState(() {
         blokList[i]['warga'] = '$count Warga';
       });
