@@ -6,14 +6,20 @@ class KelolaWargaItem extends StatefulWidget {
   final String email;
   final String uid;
 
-  const KelolaWargaItem({super.key, required this.nama, required this.email, required this.uid});
+  const KelolaWargaItem({
+    super.key,
+    required this.nama,
+    required this.email,
+    required this.uid,
+  });
 
   @override
   State<KelolaWargaItem> createState() => _KelolaWargaItemState();
 }
 
 class _KelolaWargaItemState extends State<KelolaWargaItem> {
-  final List<String> roles = ['warga', 'admin', 'pengurus'];
+  // final List<String> roles = ['warga', 'admin', 'pengurus'];
+  final List<String> roles = ['warga', 'admin'];
   String? selectedRole;
 
   @override
@@ -79,7 +85,9 @@ class _KelolaWargaItemState extends State<KelolaWargaItem> {
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Akun berhasil disetujui dengan role $selectedRole'),
+                                  content: Text(
+                                    'Akun berhasil disetujui dengan role $selectedRole',
+                                  ),
                                 ),
                               );
                             });

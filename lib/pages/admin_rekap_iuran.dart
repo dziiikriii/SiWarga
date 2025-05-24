@@ -16,10 +16,21 @@ class AdminRekapIuran extends StatefulWidget {
 class _AdminRekapIuranState extends State<AdminRekapIuran> {
   DateTime selectedDate = DateTime.now();
   String selectedBlok = 'A';
+  String? selectedValue = 'Iuran Bulanan';
+  final List<String> options = ['Iuran Bulanan', 'Iuran Insidental'];
+  List<String> headerTitles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    updateHeaderTitles();
+  }
 
   Stream<List<bool>> getStatusIuranWargaStream({
     required String userId,
     required int tahun,
+    required String tipe,
+    List<String>? customLabels,
   }) {
     final bulanList = [
       'Januari',
@@ -36,30 +47,35 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
       'Desember',
     ];
 
+    final labelList =
+        tipe == 'Iuran Bulanan' ? bulanList : (customLabels ?? []);
+
     return FirebaseFirestore.instance
         .collection('tagihan_user')
         .doc(userId)
         .collection('items')
-        .where('tipe', isEqualTo: 'Iuran Bulanan')
+        .where('tipe', isEqualTo: tipe == 'Iuran Bulanan' ? 'Iuran Bulanan' : 'Iuran Lainnya')
         .where('status', isEqualTo: 'lunas')
         .snapshots()
         .map((snapshot) {
-          final List<bool> checklist = List.filled(12, false);
+          final List<bool> checklist = List.filled(labelList.length, false);
 
           for (var doc in snapshot.docs) {
+            debugPrint('Doc ditemukan: ${doc.data()}');
             final nama = doc['nama']?.toString() ?? '';
             // final tanggal = doc['tanggal_bayar'];
             final tanggal = doc['tenggat']?.toString();
 
             if (tanggal != null && tanggal.isNotEmpty) {
               try {
+                debugPrint('Tanggal dari ${doc.id}: $tanggal');
                 final date = DateTime.parse(
                   tanggal.split('-').reversed.join('-'),
                 );
                 if (date.year == tahun) {
-                  for (int i = 0; i < 12; i++) {
-                    final namaBulan = bulanList[i];
-                    if (nama.contains(namaBulan)) {
+                  for (int i = 0; i < labelList.length; i++) {
+                    final label = labelList[i];
+                    if (nama.contains(label)) {
                       checklist[i] = true;
                     }
                   }
@@ -71,8 +87,54 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
           }
 
           debugPrint('Checklist untuk $userId : $checklist');
+          debugPrint('Label digunakan untuk $userId: $labelList');
           return checklist;
         });
+  }
+
+  Future<List<String>> fetchNamaIuranInsidental(int tahun) async {
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collectionGroup('items')
+            .where('tipe', isEqualTo: 'Iuran Lainnya')
+            .orderBy('status')
+            // .where('status', isEqualTo: 'lunas')
+            .get();
+
+    final List<String> namaList = [];
+
+    for (var doc in snapshot.docs) {
+      final nama = doc['nama']?.toString() ?? '';
+      final tanggal = doc['tenggat']?.toString();
+
+      if (tanggal != null && tanggal.isNotEmpty) {
+        try {
+          final date = DateTime.parse(tanggal.split('-').reversed.join('-'));
+          if (date.year == tahun) {
+            if (!namaList.contains(nama)) {
+              namaList.add(nama);
+            }
+          }
+        } catch (_) {}
+      }
+    }
+
+    return namaList;
+  }
+
+  Future<void> updateHeaderTitles() async {
+    debugPrint('updateHeaderTitles() dipanggil dengan: $selectedValue');
+    if (selectedValue == 'Iuran Insidental') {
+      final namaIuran = await fetchNamaIuranInsidental(selectedDate.year);
+      debugPrint('Header insidental: $namaIuran');
+      setState(() {
+        headerTitles = namaIuran;
+      });
+    } else {
+      setState(() {
+        headerTitles = [];
+      });
+    }
   }
 
   @override
@@ -87,13 +149,49 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // SizedBox(height: 10),
-            BarTahun(
-              selectedDate: selectedDate,
-              onDateChanged: (newDate) {
-                setState(() {
-                  selectedDate = newDate;
-                });
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: DropdownButton<String>(
+                    value: selectedValue,
+                    items:
+                        options.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                    onChanged: (newValue) async {
+                      setState(() {
+                        selectedValue = newValue!;
+                        headerTitles = [];
+                      });
+                      await updateHeaderTitles();
+                    },
+                  ),
+                ),
+                SizedBox(width: 10),
+                BarTahun(
+                  selectedDate: selectedDate,
+                  onDateChanged: (newDate) async {
+                    setState(() {
+                      selectedDate = newDate;
+                    });
+                  },
+                ),
+              ],
             ),
             SizedBox(height: 10),
             BlokBar(
@@ -102,8 +200,13 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
                   selectedBlok = blok;
                 });
               },
-            ), // Optional: jika ingin filter berdasarkan blok
-            SizedBox(height: 10),
+            ),
+            Column(
+              children: [
+                if (selectedValue == 'Iuran Insidental' && headerTitles.isEmpty)
+                  const Center(child: CircularProgressIndicator()),
+              ],
+            ),
             Expanded(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -111,7 +214,26 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const BulanRekapBar(),
+                      BulanRekapBar(
+                        labels:
+                            headerTitles.isEmpty
+                                ? [
+                                  'Jan',
+                                  'Feb',
+                                  'Mar',
+                                  'Apr',
+                                  'Mei',
+                                  'Jun',
+                                  'Jul',
+                                  'Agu',
+                                  'Sep',
+                                  'Okt',
+                                  'Nov',
+                                  'Des',
+                                ]
+                                : headerTitles,
+                      ),
+
                       Expanded(
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical,
@@ -143,18 +265,18 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
                                         // final displayKode = '$kodeWarga - ${namaWarga.substring(0, 3)}';
                                         final displayKode =
                                             '${namaWarga.substring(0, 3)}-$noRumah';
-
-                                        // Dummy checklist, bisa diganti pakai tagihan firebase
-                                        // final kondisiChecklist = List.generate(
-                                        //   12,
-                                        //   (i) => false,
-                                        // );
-
                                         return StreamBuilder<List<bool>>(
-                                          key: ValueKey('${userId}_$tahun'),
+                                          key: ValueKey(
+                                            '${userId}_${tahun}_$selectedValue',
+                                          ),
                                           stream: getStatusIuranWargaStream(
                                             userId: userId,
                                             tahun: tahun,
+                                            tipe: selectedValue!,
+                                            customLabels:
+                                                selectedValue == 'Iuran Bulanan'
+                                                    ? null
+                                                    : headerTitles,
                                           ),
                                           builder: (context, snapshot) {
                                             debugPrint(
@@ -179,6 +301,10 @@ class _AdminRekapIuranState extends State<AdminRekapIuran> {
                                                   kondisiChecklist,
                                               namaWarga: namaWarga,
                                               userId: userId,
+                                              isInsidental:
+                                                  selectedValue ==
+                                                  'Iuran Insidental',
+                                              judulInsidental: headerTitles,
                                             );
                                           },
                                         );

@@ -1,1 +1,5 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"siwarga","appId":"1:664835202666:android:b5483b64e14936e7c1b413","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"siwarga","configurations":{"android":"1:664835202666:android:b5483b64e14936e7c1b413","ios":"1:664835202666:ios:8d08cd3af13a985cc1b413","web":"1:664835202666:web:28e0827dff8136c0c1b413"}}}}}}
+{
+  "functions": {
+    "source": "functions"
+  }
+}

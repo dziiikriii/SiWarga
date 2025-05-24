@@ -7,12 +7,17 @@ class RekapPerWarga extends StatelessWidget {
   final String kodeWarga; // Misalnya: "Adi-08" → ambil namaWarga: Adi
   final String namaWarga;
   final String userId;
+  final bool isInsidental;
+  final List<String> judulInsidental;
 
   const RekapPerWarga({
     super.key,
     required this.kondisiChecklist,
     required this.kodeWarga,
-    required this.namaWarga, required this.userId,
+    required this.namaWarga,
+    required this.userId,
+    required this.isInsidental,
+    required this.judulInsidental,
   });
 
   final List<String> bulanList = const [
@@ -32,6 +37,8 @@ class RekapPerWarga extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> displayList = isInsidental ? judulInsidental : bulanList;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -40,16 +47,20 @@ class RekapPerWarga extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 13),
             child: LogoWarga(kode: kodeWarga),
           ),
-          ...List.generate(12, (index) {
+          ...List.generate(displayList.length, (index) {
             return ChecklistRekap(
-              initialCondition: kondisiChecklist[index],
+              initialCondition:
+                  index < kondisiChecklist.length
+                      ? kondisiChecklist[index]
+                      : false,
               namaWarga: namaWarga,
-              namaBulan: bulanList[index],
+              namaBulan: displayList[index],
               userId: userId,
+              isInsidental: isInsidental,
               onConfirmedChange: (newValue) {
                 // Tambahkan log atau update ke database jika perlu
                 debugPrint(
-                  'Checklist bulan ${bulanList[index]} untuk $namaWarga diubah ke: $newValue',
+                  '${isInsidental ? "Tagihan" : "Bulan"} ${displayList[index]} untuk $namaWarga diubah ke: $newValue',
                 );
               },
             );

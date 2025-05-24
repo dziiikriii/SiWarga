@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BulanRekapBar extends StatelessWidget {
-  const BulanRekapBar({super.key});
+  final List<String> labels;
+  const BulanRekapBar({super.key, required this.labels});
 
   @override
   Widget build(BuildContext context) {
@@ -22,54 +23,14 @@ class BulanRekapBar extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Jan', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Feb', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Mar', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Apr', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Mei', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Jun', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Jul', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Agu', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Sep', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Okt', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Nov', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Text('Des', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
+            for (var label in labels)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 7),
+                child: Text(
+                  label.length > 3 ? label.substring(0, 3) : label,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
           ],
         ),
       ),

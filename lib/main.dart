@@ -1,4 +1,4 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:si_warga/pages/splash_screen.dart';
@@ -19,7 +19,7 @@ void main() async {
   await initializeDateFormatting('id_ID', null);
   await NotificationService.initialize();
   await requestNotificationPermission();
-  await FirebaseMessaging.instance.requestPermission();
+  // await FirebaseMessaging.instance.requestPermission();
   // final fcmToken = await FirebaseMessaging.instance.getToken();
   runApp(const MyApp());
 }

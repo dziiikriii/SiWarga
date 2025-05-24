@@ -5,7 +5,8 @@ class ChecklistRekap extends StatefulWidget {
   final bool initialCondition;
   final String namaWarga;
   final String namaBulan;
-  final String userId; // Dibutuhkan untuk update Firestore
+  final String userId;
+  final bool isInsidental;
   final Function(bool newValue) onConfirmedChange;
 
   const ChecklistRekap({
@@ -15,6 +16,7 @@ class ChecklistRekap extends StatefulWidget {
     required this.namaBulan,
     required this.userId,
     required this.onConfirmedChange,
+    required this.isInsidental,
   });
 
   @override
@@ -67,22 +69,15 @@ class _ChecklistRekapState extends State<ChecklistRekap> {
 
   Future<void> _updateFirestore(bool isLunas) async {
     // final tahun = DateTime.now().year;
-    final namaTagihan = "Iuran ${widget.namaBulan}";
+    // final namaTagihan = "Iuran ${widget.namaBulan}";
+    final namaTagihan =
+        widget.isInsidental ? widget.namaBulan : "Iuran ${widget.namaBulan}";
 
     try {
       final userTagihanRef = FirebaseFirestore.instance
           .collection('tagihan_user')
           .doc(widget.userId)
           .collection('items');
-
-      // final query =
-      //     await FirebaseFirestore.instance
-      //         .collection('tagihan_user')
-      //         .doc(widget.userId)
-      //         .collection('items')
-      //         .where('nama', isEqualTo: namaTagihan)
-      //         .limit(1)
-      //         .get();
 
       final query =
           await userTagihanRef
@@ -94,12 +89,6 @@ class _ChecklistRekapState extends State<ChecklistRekap> {
 
       if (query.docs.isNotEmpty) {
         final docId = query.docs.first.id;
-        // await FirebaseFirestore.instance
-        //     .collection('tagihan_user')
-        //     .doc(widget.userId)
-        //     .collection('items')
-        //     .doc(docId)
-        //     .update({'status': isLunas ? 'lunas' : 'belum bayar'});
         await userTagihanRef.doc(docId).update({
           'status': isLunas ? 'lunas' : 'belum bayar',
           'tanggal_bayar': isLunas ? Timestamp.fromDate(now) : null,

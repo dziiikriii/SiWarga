@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:si_warga/pages/generate_tagihan_bulanan.dart';
 import 'package:si_warga/pages/konfirmasi_pembayaran_warga.dart';
 import 'package:si_warga/pages/tambah_tagihan.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
+import 'package:si_warga/widgets/bar_tahun.dart';
 import 'package:si_warga/widgets/checklist_tagihan_item.dart';
 import 'package:si_warga/widgets/lunas_bar.dart';
 
@@ -16,9 +18,12 @@ class AdminTagihanWarga extends StatefulWidget {
 
 class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
   int selectedIndex = 0;
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
+    // final startOfYear = DateTime(selectedDate.year, 1, 1);
+    // final endOfYear = DateTime(selectedDate.year + 1, 1, 1);
     return Scaffold(
       appBar: AppBarDefault(title: 'Tagihan Iuran Warga'),
       body: Padding(
@@ -37,6 +42,15 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
               },
             ),
             SizedBox(height: 20),
+            BarTahun(
+              selectedDate: selectedDate,
+              onDateChanged: (newDate) {
+                setState(() {
+                  selectedDate = newDate;
+                });
+              },
+            ),
+            // SizedBox(height: 20),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -61,16 +75,34 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                                       ? 'Iuran Bulanan'
                                       : 'Iuran Lainnya',
                             )
+                            // .where(
+                            //   'tenggat',
+                            //   isGreaterThanOrEqualTo: startOfYear,
+                            // )
+                            // .where('tenggat', isLessThan: endOfYear)
                             .orderBy('createdAt', descending: true)
                             .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return CircularProgressIndicator();
                       final tagihanList = snapshot.data!.docs;
 
+                      final filteredDocs =
+                          tagihanList.where((doc) {
+                            final tenggatStr = doc['tenggat'];
+                            try {
+                              final tenggatDate = DateFormat(
+                                'dd-MM-yyyy',
+                              ).parse(tenggatStr);
+                              return tenggatDate.year == selectedDate.year;
+                            } catch (e) {
+                              return false;
+                            }
+                          }).toList();
+
                       return ListView.builder(
-                        itemCount: tagihanList.length,
+                        itemCount: filteredDocs.length,
                         itemBuilder: (context, index) {
-                          final data = tagihanList[index];
+                          final data = filteredDocs[index];
                           return ChecklistTagihanItem(
                             title: data['nama'],
                             value: data['jumlah'],

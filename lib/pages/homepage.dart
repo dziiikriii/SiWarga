@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/kelola_warga.dart';
 import 'package:si_warga/pages/notifikasi.dart';
@@ -17,31 +17,32 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  final Set<String> notifiedPembayaranIds = {};
+
   @override
   void initState() {
     super.initState();
     // _listenPembayaranBaru();
+    // NotificationService.initialize();
     _cekDanPasangListener();
-    saveAdminToken();
+    // saveAdminToken();
   }
 
-  Future<void> saveAdminToken() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken != null) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({'fcmToken': fcmToken});
-      }
-    }
-  }
+  // Future<void> saveAdminToken() async {
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if (user != null) {
+  //     final fcmToken = await FirebaseMessaging.instance.getToken();
+  //     if (fcmToken != null) {
+  //       await FirebaseFirestore.instance
+  //           .collection('users')
+  //           .doc(user.uid)
+  //           .update({'fcmToken': fcmToken});
+  //     }
+  //   }
+  // }
 
   void _listenSemuaPembayaran() {
-    FirebaseFirestore.instance.collection('tagihan_user').get().then((
-      userDocs,
-    ) {
+    FirebaseFirestore.instance.collection('tagihan_user').get().then((userDocs) {
       for (var userDoc in userDocs.docs) {
         FirebaseFirestore.instance
             .collection('tagihan_user')
@@ -50,22 +51,28 @@ class _HomepageState extends State<Homepage> {
             .where('status', isEqualTo: 'menunggu_konfirmasi')
             .snapshots()
             .listen((snapshot) {
-              for (var doc in snapshot.docChanges) {
-                if (doc.type == DocumentChangeType.added ||
-                    doc.type == DocumentChangeType.modified) {
-                  final data = doc.doc.data();
-                  final metode = data?['metode_pembayaran'] ?? '';
-                  final uid = userDoc.id;
+          for (var change in snapshot.docChanges) {
+            final docId = change.doc.id;
+            final data = change.doc.data();
 
-                  NotificationService.showNotification(
-                    id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-                    title: 'Pembayaran Masuk',
-                    body:
-                        'Pembayaran baru oleh $uid dengan metode $metode perlu dikonfirmasi.',
-                  );
-                }
-              }
-            });
+            // Pastikan notifikasi hanya untuk yang belum pernah diberi notif
+            if ((change.type == DocumentChangeType.added ||
+                 change.type == DocumentChangeType.modified) &&
+                !notifiedPembayaranIds.contains(docId)) {
+
+              final metode = data?['metode_pembayaran'] ?? '';
+              final uid = userDoc.id;
+
+              NotificationService.showNotification(
+                id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                title: 'Pembayaran Masuk',
+                body: 'Pembayaran baru oleh $uid dengan metode $metode perlu dikonfirmasi.',
+              );
+
+              notifiedPembayaranIds.add(docId); // tandai sudah diberi notif
+            }
+          }
+        });
       }
     });
   }
