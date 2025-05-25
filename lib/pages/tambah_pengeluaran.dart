@@ -17,6 +17,7 @@ class _TambahPengeluaranState extends State<TambahPengeluaran> {
   final namaPengeluaranController = TextEditingController();
   final jumlahPengeluaranController = TextEditingController();
   final dateController = TextEditingController();
+  final keteranganController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +38,11 @@ class _TambahPengeluaranState extends State<TambahPengeluaran> {
               controller: jumlahPengeluaranController,
               keyboardType: TextInputType.number,
             ),
+            DefaultInput(
+              hint: 'Keterangan',
+              label: 'Keterangan',
+              controller: keteranganController,
+            ),
             DefaultInputDate(
               title: 'Tanggal Pengeluaran',
               dateController: dateController,
@@ -48,6 +54,7 @@ class _TambahPengeluaranState extends State<TambahPengeluaran> {
                 final nama = namaPengeluaranController.text;
                 final jumlah =
                     int.tryParse(jumlahPengeluaranController.text) ?? 0;
+                final keterangan = keteranganController.text;
 
                 DateTime? tanggal;
                 try {
@@ -79,6 +86,7 @@ class _TambahPengeluaranState extends State<TambahPengeluaran> {
                       .add({
                         'nama': nama,
                         'jumlah': jumlah,
+                        'keterangan': keterangan,
                         'tanggal': tanggal.toIso8601String(),
                         'createdAt': FieldValue.serverTimestamp(),
                       });

@@ -19,10 +19,6 @@ class EditTagihan extends StatefulWidget {
 }
 
 class _EditTagihanState extends State<EditTagihan> {
-  // final namaTagihanController = TextEditingController();
-  // final jumlahTagihanController = TextEditingController();
-  // final tipeTagihanController = TextEditingController();
-  // final dateController = TextEditingController();
   late TextEditingController namaTagihanController;
   late TextEditingController jumlahTagihanController;
   late TextEditingController tipeTagihanController;
@@ -47,22 +43,6 @@ class _EditTagihanState extends State<EditTagihan> {
     dateController = TextEditingController(text: widget.tagihanData['tenggat']);
     selectedType = widget.tagihanData['tipe'];
   }
-
-  // Future<void> selectDate(BuildContext context) async {
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     firstDate: DateTime(2024),
-  //     lastDate: DateTime(2050),
-  //     initialDate: DateTime.now(),
-  //   );
-
-  //   if (picked != null) {
-  //     setState(() {
-  //       dateController.text =
-  //           "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -144,25 +124,6 @@ class _EditTagihanState extends State<EditTagihan> {
                       .doc(widget.tagihanId)
                       .update(updatedData);
                 }
-
-                // final tagihanRef = await firestore
-                //     .collection('tagihan')
-                //     .add(tagihanData);
-
-                // final wargaSnapshot =
-                //     await firestore
-                //         .collection('users')
-                //         .where('role', isEqualTo: 'warga')
-                //         .get();
-
-                // for (var doc in wargaSnapshot.docs) {
-                //   await firestore
-                //       .collection('tagihan_user')
-                //       .doc(doc.id)
-                //       .collection('items')
-                //       .doc(tagihanRef.id)
-                //       .set({...tagihanData, 'status': 'belum bayar'});
-                // }
                 Navigator.pop(context);
               },
             ),

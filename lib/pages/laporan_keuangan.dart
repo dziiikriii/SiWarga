@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:si_warga/pages/detail_laporan_keuangan.dart';
 import 'package:si_warga/pages/tambah_pemasukan.dart';
 import 'package:si_warga/pages/tambah_pengeluaran.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
@@ -158,12 +159,31 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                                 children: [
                                   HeaderLaporanKeuangan(
                                     title: 'Saldo Kas Awal',
+                                    arrow: false,
                                   ),
                                   PengeluaranPemasukanItem(
                                     name: 'Saldo Awal',
                                     value: data['saldoAwal'],
                                   ),
-                                  HeaderLaporanKeuangan(title: 'Pemasukan'),
+                                  InkWell(
+                                    onTap: () {
+                                      role == 'admin'
+                                          ? Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => DetailLaporanKeuangan(
+                                                    selectedDate: selectedDate,
+                                                  ),
+                                            ),
+                                          )
+                                          : null;
+                                    },
+                                    child: HeaderLaporanKeuangan(
+                                      title: 'Pemasukan',
+                                      arrow: role == 'admin' ? true : false,
+                                    ),
+                                  ),
                                   ...pemasukan.map(
                                     (item) => PengeluaranPemasukanItem(
                                       name: item['nama'],
@@ -176,7 +196,25 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF184E0E),
                                   ),
-                                  HeaderLaporanKeuangan(title: 'Pengeluaran'),
+                                  InkWell(
+                                    onTap: () {
+                                      role == 'admin'
+                                          ? Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => DetailLaporanKeuangan(
+                                                    selectedDate: selectedDate,
+                                                  ),
+                                            ),
+                                          )
+                                          : null;
+                                    },
+                                    child: HeaderLaporanKeuangan(
+                                      title: 'Pengeluaran',
+                                      arrow: role == 'admin' ? true : false,
+                                    ),
+                                  ),
                                   ...pengeluaran.map(
                                     (item) => PengeluaranPemasukanItem(
                                       name: item['nama'],
@@ -191,6 +229,7 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                                   ),
                                   HeaderLaporanKeuangan(
                                     title: 'Saldo Kas Akhir',
+                                    arrow: false,
                                   ),
                                   PengeluaranPemasukanItem(
                                     name: 'Saldo Akhir',
@@ -206,6 +245,7 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                   ),
                 ),
               ),
+              SizedBox(height: 60),
             ],
           ),
         ),
