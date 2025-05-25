@@ -111,6 +111,7 @@ class _SigninPageState extends State<SigninPage> {
                         blok,
                         noRumah,
                       );
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -124,6 +125,7 @@ class _SigninPageState extends State<SigninPage> {
                         MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     } else {
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Gagal mendaftar')),
                       );

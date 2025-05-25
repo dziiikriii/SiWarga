@@ -116,6 +116,7 @@ class _TambahAdminState extends State<TambahAdmin> {
                   if (user != null) {
                     // Simpan data tambahan ke Firestore
                     await AuthService().saveUserDataAdmin(user.uid, name);
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -130,6 +131,7 @@ class _TambahAdminState extends State<TambahAdmin> {
                     // );
                     Navigator.pop(context);
                   } else {
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(SnackBar(content: Text('Gagal mendaftar')));

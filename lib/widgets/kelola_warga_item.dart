@@ -83,6 +83,7 @@ class _KelolaWargaItemState extends State<KelolaWargaItem> {
                               query.docs.first.reference.update({
                                 'role': selectedRole,
                               });
+                              if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -125,6 +126,7 @@ class _KelolaWargaItemState extends State<KelolaWargaItem> {
                               .then((query) {
                                 if (query.docs.isNotEmpty) {
                                   query.docs.first.reference.delete();
+                                  if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('User telah ditolak'),

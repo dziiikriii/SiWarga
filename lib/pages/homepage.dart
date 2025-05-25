@@ -42,7 +42,9 @@ class _HomepageState extends State<Homepage> {
   // }
 
   void _listenSemuaPembayaran() {
-    FirebaseFirestore.instance.collection('tagihan_user').get().then((userDocs) {
+    FirebaseFirestore.instance.collection('tagihan_user').get().then((
+      userDocs,
+    ) {
       for (var userDoc in userDocs.docs) {
         FirebaseFirestore.instance
             .collection('tagihan_user')
@@ -51,28 +53,28 @@ class _HomepageState extends State<Homepage> {
             .where('status', isEqualTo: 'menunggu_konfirmasi')
             .snapshots()
             .listen((snapshot) {
-          for (var change in snapshot.docChanges) {
-            final docId = change.doc.id;
-            final data = change.doc.data();
+              for (var change in snapshot.docChanges) {
+                final docId = change.doc.id;
+                final data = change.doc.data();
 
-            // Pastikan notifikasi hanya untuk yang belum pernah diberi notif
-            if ((change.type == DocumentChangeType.added ||
-                 change.type == DocumentChangeType.modified) &&
-                !notifiedPembayaranIds.contains(docId)) {
+                // Pastikan notifikasi hanya untuk yang belum pernah diberi notif
+                if ((change.type == DocumentChangeType.added ||
+                        change.type == DocumentChangeType.modified) &&
+                    !notifiedPembayaranIds.contains(docId)) {
+                  final metode = data?['metode_pembayaran'] ?? '';
+                  final uid = userDoc.id;
 
-              final metode = data?['metode_pembayaran'] ?? '';
-              final uid = userDoc.id;
+                  NotificationService.showNotification(
+                    id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                    title: 'Pembayaran Masuk',
+                    body:
+                        'Pembayaran baru oleh $uid dengan metode $metode perlu dikonfirmasi.',
+                  );
 
-              NotificationService.showNotification(
-                id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-                title: 'Pembayaran Masuk',
-                body: 'Pembayaran baru oleh $uid dengan metode $metode perlu dikonfirmasi.',
-              );
-
-              notifiedPembayaranIds.add(docId); // tandai sudah diberi notif
-            }
-          }
-        });
+                  notifiedPembayaranIds.add(docId); // tandai sudah diberi notif
+                }
+              }
+            });
       }
     });
   }
@@ -211,32 +213,8 @@ class _HomepageState extends State<Homepage> {
             SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              // child: YearBar(),
             ),
-            SizedBox(height: 20),
-
-            // Center(child: Image.asset('lib/assets/graph.png')),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     print("Tombol ditekan, mencoba kirim notifikasi...");
-            //     await NotificationService.showNotification(
-            //       id: 1,
-            //       title: "Tes Notifikasi",
-            //       body: "Ini adalah notifikasi percobaan.",
-            //     );
-            //     print("showNotification selesai");
-            //   },
-            //   child: Text("Kirim Notifikasi"),
-            // ),
             GrafikKeuangan(),
-            SizedBox(height: 20),
-            Center(
-              child: Text(
-                'Klik gambar untuk cek detail',
-                style: TextStyle(color: Color(0xFF777777)),
-              ),
-            ),
-            // BottomBar(),
             SizedBox(height: 20),
           ],
         ),

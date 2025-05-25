@@ -142,7 +142,7 @@ class _GenerateTagihanBulananState extends State<GenerateTagihanBulanan> {
                         .set({...tagihanData, 'status': 'belum bayar'});
                   }
                 }
-
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
             ),

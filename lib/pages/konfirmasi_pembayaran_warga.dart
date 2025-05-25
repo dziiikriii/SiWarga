@@ -174,6 +174,7 @@ class _KonfirmasiPembayaranWargaState extends State<KonfirmasiPembayaranWarga> {
                                   'status': 'belum bayar',
                                 });
                                 fetchPendingTagihan();
+                                if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Berhasil menolak tagihan'),
@@ -248,6 +249,7 @@ class _KonfirmasiPembayaranWargaState extends State<KonfirmasiPembayaranWarga> {
                                   'status': 'lunas',
                                 });
                                 fetchPendingTagihan();
+                                if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(

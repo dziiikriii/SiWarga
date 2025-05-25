@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                   );
 
                   if (!mounted) return;
-
+                  if (!context.mounted) return;
                   Navigator.pop(context); // Tutup loading dialog
 
                   if (user != null) {
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                             .doc(user.uid)
                             .get();
                     final role = userDoc['role'];
-
+                    if (!context.mounted) return;
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

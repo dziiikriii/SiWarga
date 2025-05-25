@@ -117,6 +117,7 @@ class _TambahTagihanState extends State<TambahTagihan> {
                       .doc(tagihanRef.id)
                       .set({...tagihanData, 'status': 'belum bayar'});
                 }
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
             ),

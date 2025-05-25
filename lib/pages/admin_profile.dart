@@ -108,7 +108,7 @@ class _AdminProfileState extends State<AdminProfile> {
 
               if (shouldLogout == true) {
                 await AuthService().logout();
-
+                if (!context.mounted) return;
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPage()),

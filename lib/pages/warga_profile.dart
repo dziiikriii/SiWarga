@@ -100,7 +100,7 @@ class _WargaProfileState extends State<WargaProfile> {
 
               if (shouldLogout == true) {
                 await AuthService().logout();
-
+                if (!context.mounted) return;
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPage()),

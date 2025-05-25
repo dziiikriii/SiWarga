@@ -46,6 +46,7 @@ class LastOnboarding extends StatelessWidget {
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('onboardingSeen', true);
+                  if (!context.mounted) return;
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const LoginPage()),

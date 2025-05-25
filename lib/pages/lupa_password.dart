@@ -57,6 +57,7 @@ class _LupaPasswordState extends State<LupaPassword> {
 
                     try {
                       await AuthService().sendPasswordResetEmail(email);
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(

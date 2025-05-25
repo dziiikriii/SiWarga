@@ -92,6 +92,7 @@ class _TambahPemasukanState extends State<TambahPemasukan> {
                       });
 
                   debugPrint('Data berhasil ditambahkan');
+                  if (!context.mounted) return;
                   Navigator.pop(context);
                 } catch (e) {
                   debugPrint('Gagal menambahkan data: $e');

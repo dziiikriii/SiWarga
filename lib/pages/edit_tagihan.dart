@@ -124,6 +124,7 @@ class _EditTagihanState extends State<EditTagihan> {
                       .doc(widget.tagihanId)
                       .update(updatedData);
                 }
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
             ),

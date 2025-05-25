@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:si_warga/widgets/grafik_keuangan.dart';
 import 'package:si_warga/widgets/halo_user.dart';
 import 'package:si_warga/widgets/info_saldo_home.dart';
 
@@ -83,16 +84,7 @@ class HomepageWarga extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               // child: YearBar(),
             ),
-            SizedBox(height: 20),
-            Center(child: Image.asset('lib/assets/graph.png')),
-            SizedBox(height: 20),
-            Center(
-              child: Text(
-                'Klik gambar untuk cek detail',
-                style: TextStyle(color: Color(0xFF777777)),
-              ),
-            ),
-            // BottomBar(),
+            GrafikKeuangan(),
             SizedBox(height: 20),
           ],
         ),
