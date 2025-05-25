@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:si_warga/pages/auth_service.dart';
 import 'package:si_warga/pages/edit_akun_admin.dart';
+import 'package:si_warga/pages/daftar_no_rek.dart';
 import 'package:si_warga/pages/login_page.dart';
 import 'package:si_warga/pages/tambah_admin.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
@@ -158,19 +159,6 @@ class _AdminProfileState extends State<AdminProfile> {
               ],
             ),
             SizedBox(height: 20),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Text(
-            //       'No. Telepon',
-            //       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-            //     ),
-            //     Text(
-            //       '089768374874',
-            //       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-            //     ),
-            //   ],
-            // ),
             SizedBox(height: 20),
             FullWidthButton(
               text: 'Edit Akun',
@@ -199,6 +187,16 @@ class _AdminProfileState extends State<AdminProfile> {
               },
             ),
             SizedBox(height: 20),
+            FullWidthButton(
+              text: 'Daftar Nomor Rekening',
+              color: Colors.grey,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => DaftarNoRek()),
+                );
+              },
+            ),
           ],
         ),
       ),

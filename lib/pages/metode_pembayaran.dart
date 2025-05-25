@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 // import 'package:si_warga/services/notification_service.dart';
@@ -21,8 +22,34 @@ class MetodePembayaran extends StatefulWidget {
 
 class MetodePembayaranState extends State<MetodePembayaran> {
   List<String> metodePembayaran = ['Transfer', 'Cash'];
+  List<Map<String, dynamic>> daftarRekening = [];
+  bool isLoadingRekening = true;
   String? selectedMetode;
   File? _buktiBayar;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDataRekening();
+  }
+
+  Future<void> fetchDataRekening() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('nomor_rekening').get();
+    final data =
+        snapshot.docs.map((doc) {
+          return {
+            'nama_bank': doc['nama_bank'],
+            'no_rek': doc['no_rek'],
+            'nama_pemilik': doc['nama_pemilik'],
+          };
+        }).toList();
+
+    setState(() {
+      daftarRekening = data;
+      isLoadingRekening = false;
+    });
+  }
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -39,7 +66,6 @@ class MetodePembayaranState extends State<MetodePembayaran> {
 
     if (selectedMetode == null ||
         (selectedMetode == 'Transfer' && _buktiBayar == null)) {
-      // if (selectedMetode == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Lengkapi semua data!')));
@@ -51,6 +77,7 @@ class MetodePembayaranState extends State<MetodePembayaran> {
       buktiUrl = await uploadImageToSupabase(_buktiBayar!);
 
       if (buktiUrl == null) {
+        if (!mounted) return;
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Upload gambar gagal')));
@@ -73,12 +100,7 @@ class MetodePembayaranState extends State<MetodePembayaran> {
           });
     }
 
-    // await NotificationService.showNotification(
-    //   id: 1001,
-    //   title: 'Konfirmasi Pembayaran Diperlukan',
-    //   body: 'Ada pembayaran dari warga yang perlu dikonfirmasi.',
-    // );
-
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -87,6 +109,7 @@ class MetodePembayaranState extends State<MetodePembayaran> {
       ),
     );
 
+    if (!mounted) return;
     Navigator.pop(context, 'success');
   }
 
@@ -239,45 +262,64 @@ class MetodePembayaranState extends State<MetodePembayaran> {
                 ],
               ),
 
-              // if(selectedMetode == 'transfer') {
-              //   Text('Transfer ke salah satu bank berikut'),
-              // },
               SizedBox(height: 20),
               if (selectedMetode == 'Transfer') ...[
-                Column(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Transfer ke salah satu bank berikut',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                isLoadingRekening
+                    ? CircularProgressIndicator()
+                    : Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Bank Mandiri'),
-                            Text('Bank BCA'),
-                            Text('Bank BSI'),
-                          ],
+                        Text(
+                          'Transfer ke salah satu bank berikut',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SelectableText('1234 5678 9999'),
-                            SelectableText('1234 5678 9999'),
-                            SelectableText('1234 5678 9999'),
-                          ],
-                        ),
+                        SizedBox(height: 10),
+                        ...daftarRekening.map((rek) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(rek['nama_bank']),
+                                      Text('A.N. ${rek['nama_pemilik']}'),
+                                    ],
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Clipboard.setData(
+                                      ClipboardData(text: rek['no_rek']),
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Nomor rekening disalin ke clipboard',
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    rek['no_rek'],
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
                       ],
                     ),
-                  ],
-                ),
                 SizedBox(height: 50),
 
                 Text(
