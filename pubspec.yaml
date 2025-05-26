@@ -73,6 +73,7 @@ flutter:
     - lib/assets/siwarga_logo.png
     - lib/assets/logo_only.png
     - lib/assets/graph.png
+    - lib/assets/default_profile.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

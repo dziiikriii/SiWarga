@@ -84,7 +84,22 @@ class HomepageWarga extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               // child: YearBar(),
             ),
-            GrafikKeuangan(),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(20),
+                    offset: Offset(4, 4),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: GrafikKeuangan(),
+            ),
             SizedBox(height: 20),
           ],
         ),

@@ -19,6 +19,7 @@ class AdminProfile extends StatefulWidget {
 class _AdminProfileState extends State<AdminProfile> {
   String nama = '';
   String email = '';
+  String? photoUrl;
 
   @override
   void initState() {
@@ -53,9 +54,14 @@ class _AdminProfileState extends State<AdminProfile> {
         debugPrint('UID: ${FirebaseAuth.instance.currentUser?.uid}');
 
         if (docSnapshot.exists) {
+          final fetchedUrl = docSnapshot.data()?['photo_url'];
           setState(() {
             nama = capitalizeEachWord(docSnapshot.data()?['name']);
             email = user.email ?? '';
+            photoUrl =
+                fetchedUrl != null
+                    ? '$fetchedUrl?t=${DateTime.now().millisecondsSinceEpoch}'
+                    : null;
             // email = docSnapshot.data()?['email'];
           });
         }
@@ -124,7 +130,14 @@ class _AdminProfileState extends State<AdminProfile> {
         padding: const EdgeInsets.all(30),
         child: Column(
           children: [
-            Image.asset('lib/assets/siwarga_logo.png', height: 100),
+            photoUrl != null
+                ? CircleAvatar(
+                  radius: 70,
+                  backgroundImage: NetworkImage(photoUrl!),
+                  key: ValueKey(photoUrl),
+                )
+                : Image.asset('lib/assets/default_profile.png', height: 100),
+            // Image.asset('lib/assets/siwarga_logo.png', height: 100),
             SizedBox(height: 20),
             Text(
               nama,

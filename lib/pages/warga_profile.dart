@@ -20,6 +20,7 @@ class _WargaProfileState extends State<WargaProfile> {
   String alamat = '';
   String blok = '';
   String noRumah = '';
+  String? photoUrl;
 
   @override
   void initState() {
@@ -45,15 +46,26 @@ class _WargaProfileState extends State<WargaProfile> {
         final uid = user.uid;
         final docSnapshot =
             await FirebaseFirestore.instance.collection('users').doc(uid).get();
-        debugPrint('UID: ${FirebaseAuth.instance.currentUser?.uid}');
+
+        // final fetchedUrl = docSnapshot.data()?['photo_url'];
+        // photoUrl =
+        //     fetchedUrl != null
+        //         ? '$fetchedUrl?t=${DateTime.now().millisecondsSinceEpoch}'
+        //         : null;
+        // debugPrint('UID: ${FirebaseAuth.instance.currentUser?.uid}');
 
         if (docSnapshot.exists) {
+          final fetchedUrl = docSnapshot.data()?['photo_url'];
           setState(() {
             nama = capitalizeEachWord(docSnapshot.data()?['name']);
             email = user.email ?? '';
             alamat = capitalizeEachWord(docSnapshot.data()?['address']);
             blok = docSnapshot.data()?['blok'];
             noRumah = docSnapshot.data()?['no_rumah'];
+            photoUrl =
+                fetchedUrl != null
+                    ? '$fetchedUrl?t=${DateTime.now().millisecondsSinceEpoch}'
+                    : null;
             // email = docSnapshot.data()?['email'];
           });
         }
@@ -117,7 +129,14 @@ class _WargaProfileState extends State<WargaProfile> {
           padding: const EdgeInsets.all(30),
           child: Column(
             children: [
-              Image.asset('lib/assets/siwarga_logo.png', height: 100),
+              photoUrl != null
+                  ? CircleAvatar(
+                    radius: 70,
+                    backgroundImage: NetworkImage(photoUrl!),
+                    key: ValueKey(photoUrl),
+                  )
+                  : Image.asset('lib/assets/default_profile.png', height: 100),
+
               SizedBox(height: 20),
               Text(
                 nama,
@@ -195,6 +214,9 @@ class _WargaProfileState extends State<WargaProfile> {
                       alamat = capitalizeEachWord(updatedData['address'] ?? '');
                       blok = updatedData['blok'] ?? '';
                       noRumah = updatedData['no_rumah'] ?? '';
+                      if (updatedData['photo_url'] != null) {
+                        photoUrl = updatedData['photo_url'];
+                      }
                     });
                   }
                 },

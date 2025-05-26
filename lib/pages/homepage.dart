@@ -211,10 +211,23 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
             SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 20)),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(20),
+                    offset: Offset(4, 4),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: GrafikKeuangan(),
             ),
-            GrafikKeuangan(),
             SizedBox(height: 20),
           ],
         ),
