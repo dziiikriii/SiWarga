@@ -102,7 +102,6 @@ class _SigninPageState extends State<SigninPage> {
                       password,
                     );
                     if (user != null) {
-                      // Simpan data tambahan ke Firestore
                       await AuthService().saveUserData(
                         user.uid,
                         name,

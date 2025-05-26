@@ -26,7 +26,6 @@ class _WargaProfileState extends State<WargaProfile> {
   void initState() {
     super.initState();
     fetchDataProfil();
-    // Future.delayed(Duration.zero, fetchDataProfil());
   }
 
   String capitalizeEachWord(String text) {
@@ -47,13 +46,6 @@ class _WargaProfileState extends State<WargaProfile> {
         final docSnapshot =
             await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
-        // final fetchedUrl = docSnapshot.data()?['photo_url'];
-        // photoUrl =
-        //     fetchedUrl != null
-        //         ? '$fetchedUrl?t=${DateTime.now().millisecondsSinceEpoch}'
-        //         : null;
-        // debugPrint('UID: ${FirebaseAuth.instance.currentUser?.uid}');
-
         if (docSnapshot.exists) {
           final fetchedUrl = docSnapshot.data()?['photo_url'];
           setState(() {
@@ -66,7 +58,6 @@ class _WargaProfileState extends State<WargaProfile> {
                 fetchedUrl != null
                     ? '$fetchedUrl?t=${DateTime.now().millisecondsSinceEpoch}'
                     : null;
-            // email = docSnapshot.data()?['email'];
           });
         }
       }
@@ -164,9 +155,17 @@ class _WargaProfileState extends State<WargaProfile> {
                     'Email',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                   ),
-                  Text(
-                    email,
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  Expanded(
+                    child: Text(
+                      email,
+                      textAlign: TextAlign.right,
+                      maxLines: 3,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -178,9 +177,17 @@ class _WargaProfileState extends State<WargaProfile> {
                     'Alamat',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                   ),
-                  Text(
-                    alamat,
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  Expanded(
+                    child: Text(
+                      alamat,
+                      textAlign: TextAlign.right,
+                      maxLines: 3,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -188,9 +195,24 @@ class _WargaProfileState extends State<WargaProfile> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Blok dan No. Rumah',
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Blok dan',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        'No. Rumah',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
                   ),
                   Text(
                     'Blok $blok No. $noRumah',

@@ -89,11 +89,24 @@ class _TambahTagihanState extends State<TambahTagihan> {
             FullWidthButton(
               text: 'Simpan',
               onPressed: () async {
+                if (namaTagihanController.text.trim().isEmpty ||
+                    jumlahTagihanController.text.trim().isEmpty ||
+                    dateController.text.trim().isEmpty ||
+                    selectedType == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Mohon isi seluruh data di atas'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
                 final firestore = FirebaseFirestore.instance;
 
                 final tagihanData = {
                   'nama': namaTagihanController.text,
-                  'jumlah': int.parse(jumlahTagihanController.text),
+                  'jumlah': int.tryParse(jumlahTagihanController.text),
                   'tipe': selectedType,
                   'tenggat': dateController.text,
                   'createdAt': FieldValue.serverTimestamp(),
@@ -118,6 +131,12 @@ class _TambahTagihanState extends State<TambahTagihan> {
                       .set({...tagihanData, 'status': 'belum bayar'});
                 }
                 if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Berhasil menambahkan tagihan'),
+                    backgroundColor: Color(0xFF184E0E),
+                  ),
+                );
                 Navigator.pop(context);
               },
             ),

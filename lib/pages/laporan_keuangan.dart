@@ -35,9 +35,11 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
     if (uid != null) {
       final doc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      setState(() {
-        role = doc.data()?['role'];
-      });
+      if (mounted) {
+        setState(() {
+          role = doc.data()?['role'];
+        });
+      }
     }
   }
 

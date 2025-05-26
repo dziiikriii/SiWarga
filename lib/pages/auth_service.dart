@@ -103,37 +103,6 @@ class AuthService {
     }
   }
 
-  // Future<Map<String, dynamic>?> loginWithEmail(
-  //   String email,
-  //   String password,
-  // ) async {
-  //   try {
-  //     UserCredential cred = await _auth.signInWithEmailAndPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-
-  //     // Cek verifikasi email
-  //     if (!cred.user!.emailVerified) {
-  //       await _auth.signOut();
-  //       return {'error': 'Email belum diverifikasi. Silakan cek email anda'};
-  //     }
-
-  //     // Ambil data user dari Firestore
-  //     DocumentSnapshot userDoc =
-  //         await _firestore.collection('users').doc(cred.user!.uid).get();
-
-  //     if (userDoc.exists) {
-  //       return {'user': cred.user, 'role': userDoc['role']};
-  //     } else {
-  //       return {'error': 'Data user tidak ditemukan di Firestore'};
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error saat login: $e');
-  //     return {'error': 'Login gagal. Email atau password salah'};
-  //   }
-  // }
-
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);

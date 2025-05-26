@@ -144,6 +144,13 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
                       );
                       if (confirmDelete == true) {
                         await hapusTagihan(widget.tagihanId);
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Berhasil menghapus tagihan'),
+                            backgroundColor: Color(0xFF184E0E),
+                          ),
+                        );
                       }
                     },
                     child: Icon(

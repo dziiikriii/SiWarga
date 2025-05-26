@@ -163,11 +163,13 @@ class _GrafikKeuanganState extends State<GrafikKeuangan> {
     tempMaxY *= 1.2;
     if (tempMaxY == 0) tempMaxY = 10;
 
-    setState(() {
-      barData = newBarData;
-      monthLabels = newMonthLabels;
-      maxY = tempMaxY;
-    });
+    if (mounted) {
+      setState(() {
+        barData = newBarData;
+        monthLabels = newMonthLabels;
+        maxY = tempMaxY;
+      });
+    }
   }
 
   @override

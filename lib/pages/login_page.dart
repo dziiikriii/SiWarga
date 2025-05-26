@@ -14,7 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // String selectedRole = 'warga'; // Default pilihan aktif
   bool _obscurePassword = true;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -99,10 +98,6 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Text(
-                //   'Lupa password anda? ',
-                //   style: TextStyle(color: Color(0xFF777777)),
-                // ),
                 TextButton(
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
@@ -184,11 +179,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 10),
             Center(
-              // child: Text(
-              //   'Lupa password?',
-              //   style: TextStyle(color: Color(0xFF777777)),
-              //   textAlign: TextAlign.center,
-              // ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -46,12 +46,12 @@ class _WargaTagihanWargaState extends State<WargaTagihanWarga> {
       return dateA.compareTo(dateB);
     });
 
-    setState(() {
-      _tagihanList = tagihanList;
-      // _tagihanList =
-      //     snapshot.docs.where((doc) => doc['status'] == 'belum bayar').toList();
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _tagihanList = tagihanList;
+        _isLoading = false;
+      });
+    }
   }
 
   @override

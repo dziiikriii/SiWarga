@@ -165,9 +165,14 @@ class _AdminProfileState extends State<AdminProfile> {
                   'Email',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                 ),
-                Text(
-                  email,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                Expanded(
+                  child: Text(
+                    email,
+                    textAlign: TextAlign.right,
+                    maxLines: 3,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                  ),
                 ),
               ],
             ),

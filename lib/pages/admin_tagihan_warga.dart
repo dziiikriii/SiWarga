@@ -105,7 +105,7 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
                           final data = filteredDocs[index];
                           return ChecklistTagihanItem(
                             title: data['nama'],
-                            value: data['jumlah'],
+                            value: data['jumlah'] ?? 0,
                             tenggat: data['tenggat'],
                             tagihanId: data.id,
                             tagihanData: data.data() as Map<String, dynamic>,

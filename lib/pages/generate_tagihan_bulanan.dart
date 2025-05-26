@@ -105,6 +105,19 @@ class _GenerateTagihanBulananState extends State<GenerateTagihanBulanan> {
             FullWidthButton(
               text: 'Simpan',
               onPressed: () async {
+                final nama = namaTagihanController.text.trim();
+                final jumlahText = jumlahTagihanController.text.trim();
+                // final tenggat = dateController.text.trim();
+
+                if (nama.isEmpty || jumlahText.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Semua field harus diisi'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
                 final firestore = FirebaseFirestore.instance;
                 final tahun = DateTime.now().year;
                 final selectedBulan =
@@ -112,12 +125,23 @@ class _GenerateTagihanBulananState extends State<GenerateTagihanBulanan> {
                         .where((entry) => entry.value)
                         .map((entry) => entry.key)
                         .toList();
+                final jumlah = int.tryParse(jumlahText);
+
+                if (jumlah == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Jumlah tagihan harus diisi'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
 
                 for (var bulan in selectedBulan) {
                   final tenggat = _getTanggalAkhirBulan(bulan, tahun);
                   final tagihanData = {
                     'nama': 'Iuran $bulan',
-                    'jumlah': int.parse(jumlahTagihanController.text),
+                    // 'jumlah': int.tryParse(jumlahTagihanController.text),
+                    'jumlah': jumlah,
                     'tipe': 'Iuran Bulanan',
                     'tenggat': tenggat,
                     'createdAt': FieldValue.serverTimestamp(),

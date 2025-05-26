@@ -32,10 +32,12 @@ class _RiwayatPembayaranWargaState extends State<RiwayatPembayaranWarga> {
             // .orderBy('createdAt', descending: true)
             .get();
 
-    setState(() {
-      _lunasList = snapshot.docs;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _lunasList = snapshot.docs;
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -72,9 +74,7 @@ class _RiwayatPembayaranWargaState extends State<RiwayatPembayaranWarga> {
                                 return RiwayatPembayaranItem(
                                   nama: doc['nama'] ?? 'Tanpa Nama',
                                   tanggal: doc['tenggat'] ?? '-',
-                                  metode:
-                                      doc['metode_pembayaran'] ??
-                                      'cash',
+                                  metode: doc['metode_pembayaran'] ?? 'cash',
                                   // metode: 'Tidak diketahui',
                                   status: doc['status'],
                                   jumlah: (doc['jumlah'] as num).toInt(),

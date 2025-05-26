@@ -135,7 +135,10 @@ class _EditAkunWargaState extends State<EditAkunWarga> {
           'address': newAlamat,
           'blok': newBlok,
           'no_rumah': newNoRumah,
-          'photo_url': imageUrl != null ? '$imageUrl?t=${DateTime.now().microsecondsSinceEpoch}' : null,
+          'photo_url':
+              imageUrl != null
+                  ? '$imageUrl?t=${DateTime.now().microsecondsSinceEpoch}'
+                  : null,
         });
       }
     } catch (e) {
@@ -151,75 +154,77 @@ class _EditAkunWargaState extends State<EditAkunWarga> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDefault(title: 'Edit Akun'),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            DefaultInput(
-              // hint: capitalizeEachWord(nama),
-              hint: '',
-              label: 'Nama',
-              controller: _nameController,
-            ),
-            SizedBox(height: 20),
-            DefaultInput(
-              // hint: capitalizeEachWord(alamat),
-              hint: '',
-              label: 'Alamat',
-              controller: _alamatController,
-            ),
-            SizedBox(height: 20),
-            BlokNoRumahInput(
-              blokController: _blokController,
-              noRumahController: _noRumahController,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Upload Foto Profil',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
-            SizedBox(height: 10),
-            TextButton(
-              style: TextButton.styleFrom(
-                side: BorderSide(color: Color(0xFF777777)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              DefaultInput(
+                // hint: capitalizeEachWord(nama),
+                hint: '',
+                label: 'Nama',
+                controller: _nameController,
+              ),
+              SizedBox(height: 20),
+              DefaultInput(
+                // hint: capitalizeEachWord(alamat),
+                hint: '',
+                label: 'Alamat',
+                controller: _alamatController,
+              ),
+              SizedBox(height: 20),
+              BlokNoRumahInput(
+                blokController: _blokController,
+                noRumahController: _noRumahController,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Upload Foto Profil',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                style: TextButton.styleFrom(
+                  side: BorderSide(color: Color(0xFF777777)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: _pickImage,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.file_upload_outlined, color: Color(0xFF777777)),
+                    Text(
+                      'Tambahkan File',
+                      style: TextStyle(color: Color(0xFF777777)),
+                    ),
+                  ],
                 ),
               ),
-              onPressed: _pickImage,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.file_upload_outlined, color: Color(0xFF777777)),
-                  Text(
-                    'Tambahkan File',
-                    style: TextStyle(color: Color(0xFF777777)),
-                  ),
-                ],
+              SizedBox(height: 20),
+              if (_fotoProfil != null) Image.file(_fotoProfil!, height: 150),
+              SizedBox(height: 10),
+              Text(path.basename(_fotoProfil?.path ?? '')),
+              SizedBox(height: 20),
+              FullWidthButton(
+                text: 'Simpan Perubahan',
+                onPressed: () async {
+                  final newName = _nameController.text.trim();
+                  final newAddress = _alamatController.text.trim();
+                  final newBlok = _blokController.text.trim();
+                  final newNoRumah = _noRumahController.text.trim();
+                  if (newName.isNotEmpty) {
+                    await updateData(newName, newAddress, newBlok, newNoRumah);
+                  } else {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Data kosong')));
+                  }
+                },
               ),
-            ),
-            SizedBox(height: 20),
-            if (_fotoProfil != null) Image.file(_fotoProfil!, height: 150),
-            SizedBox(height: 10),
-            Text(path.basename(_fotoProfil?.path ?? '')),
-            SizedBox(height: 20),
-            FullWidthButton(
-              text: 'Simpan Perubahan',
-              onPressed: () async {
-                final newName = _nameController.text.trim();
-                final newAddress = _alamatController.text.trim();
-                final newBlok = _blokController.text.trim();
-                final newNoRumah = _noRumahController.text.trim();
-                if (newName.isNotEmpty) {
-                  await updateData(newName, newAddress, newBlok, newNoRumah);
-                } else {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('Data kosong')));
-                }
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
