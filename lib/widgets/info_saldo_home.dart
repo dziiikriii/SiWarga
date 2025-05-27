@@ -11,6 +11,7 @@ class InfoSaldoHome extends StatefulWidget {
 class _InfoSaldoHomeState extends State<InfoSaldoHome> {
   int saldoKas = 0;
   int jumlahHunian = 0;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -35,7 +36,9 @@ class _InfoSaldoHomeState extends State<InfoSaldoHome> {
         final parts = docId.split('-');
         if (parts.length == 2 && parts[0] == currentYear) {
           final monthName = parts[1];
-          final monthNumber = _convertMonthNameToNumber(monthName);
+          final monthNumber = _convertMonthNameToNumber(
+            monthName.toLowerCase(),
+          );
 
           if (monthNumber > latestMonth) {
             latestMonth = monthNumber;
@@ -51,6 +54,8 @@ class _InfoSaldoHomeState extends State<InfoSaldoHome> {
                 .doc(latestDocId)
                 .get();
         saldo = latestDoc.data()?['saldoAkhir'] ?? 0;
+        debugPrint('Mengambil dokumen: $latestDocId');
+        debugPrint('Isi data: ${latestDoc.data()}');
       }
 
       final userSnapshot =
@@ -59,10 +64,14 @@ class _InfoSaldoHomeState extends State<InfoSaldoHome> {
               .where('role', isEqualTo: 'warga')
               .get();
 
-      jumlahHunian = userSnapshot.docs.length;
-      saldoKas = saldo;
+      // jumlahHunian = userSnapshot.docs.length;
+      // saldoKas = saldo;
 
-      setState(() {});
+      setState(() {
+        jumlahHunian = userSnapshot.docs.length;
+        saldoKas = saldo;
+        isLoading = false;
+      });
     } catch (e) {
       debugPrint('Gagal mengambil data: $e');
     }
@@ -101,6 +110,9 @@ class _InfoSaldoHomeState extends State<InfoSaldoHome> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
     return Container(
       decoration: BoxDecoration(
         color: Color(0xFFECFCEC),

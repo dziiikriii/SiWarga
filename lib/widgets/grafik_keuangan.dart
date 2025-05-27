@@ -138,14 +138,14 @@ class _GrafikKeuanganState extends State<GrafikKeuangan> {
             BarChartRodData(
               toY: data['pemasukan'],
               color: Colors.green,
-              width: 6,
-              borderRadius: BorderRadius.circular(4),
+              width: 10,
+              borderRadius: BorderRadius.circular(10),
             ),
             BarChartRodData(
               toY: data['pengeluaran'],
               color: Colors.red,
-              width: 6,
-              borderRadius: BorderRadius.circular(4),
+              width: 10,
+              borderRadius: BorderRadius.circular(10),
             ),
           ],
         ),

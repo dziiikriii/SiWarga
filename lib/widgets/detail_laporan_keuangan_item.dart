@@ -79,12 +79,44 @@ class DetailLaporanKeuanganItem extends StatelessWidget {
                             ),
                             actions: [
                               TextButton(
-                                child: Text('Tidak'),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    'Batal',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                                 onPressed:
                                     () => Navigator.of(context).pop(false),
                               ),
                               TextButton(
-                                child: Text('Ya'),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    'Hapus Data',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                                 onPressed:
                                     () => Navigator.of(context).pop(true),
                               ),
@@ -111,7 +143,10 @@ class DetailLaporanKeuanganItem extends StatelessWidget {
                       if (!context.mounted) return;
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Data berhasil dihapus')),
+                        SnackBar(
+                          content: Text('Data berhasil dihapus'),
+                          backgroundColor: Color(0xFF184E0E),
+                        ),
                       );
                     }
                   },

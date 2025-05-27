@@ -95,11 +95,20 @@ class _EditLaporanKeuanganState extends State<EditLaporanKeuangan> {
                   });
 
                   if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Berhasil mengedit data'),
+                      backgroundColor: Color(0xFF184E0E),
+                    ),
+                  );
                   Navigator.pop(context);
                 } catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Format tanggal tidak valid')),
+                      SnackBar(
+                        content: Text('Format tanggal tidak valid'),
+                        backgroundColor: Color(0xFF184E0E),
+                      ),
                     );
                   }
                 }
