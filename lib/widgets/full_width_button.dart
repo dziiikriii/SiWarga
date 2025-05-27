@@ -4,20 +4,22 @@ class FullWidthButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color? color;
-  final double width; // 👈 tambahan parameter
+  final double width;
+  final Icon? icon;
 
   const FullWidthButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.color = const Color(0xFF184E0E),
-    this.width = double.infinity, // 👈 default: penuh
+    this.width = double.infinity,
+    this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width, // gunakan nilai parameter width
+      width: width,
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
@@ -28,9 +30,15 @@ class FullWidthButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) ...[icon!, const SizedBox(width: 8)],
+            Text(
+              text,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );

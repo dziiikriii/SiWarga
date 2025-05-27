@@ -7,6 +7,7 @@ import 'package:si_warga/pages/detail_laporan_keuangan.dart';
 import 'package:si_warga/pages/tambah_pemasukan.dart';
 import 'package:si_warga/pages/tambah_pengeluaran.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
+import 'package:si_warga/widgets/full_width_button.dart';
 import 'package:si_warga/widgets/header_laporan_keuangan.dart';
 import 'package:si_warga/widgets/pengeluaran_pemasukan_item.dart';
 import 'package:si_warga/widgets/year_bar.dart';
@@ -466,7 +467,10 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                               ),
                             ),
                           ),
-                          ElevatedButton.icon(
+                          SizedBox(height: 20),
+                          FullWidthButton(
+                            icon: Icon(Icons.picture_as_pdf),
+                            text: 'Download Laporan Sebagai PDF',
                             onPressed: () async {
                               final data = await laporanFuture;
 
@@ -480,20 +484,35 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                                 pengeluaran: data['pengeluaran'],
                               );
                             },
-                            icon: Icon(Icons.picture_as_pdf),
-                            label: Text('Generate PDF'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF37672F),
-                              foregroundColor: Colors.white,
-                            ),
                           ),
+                          // ElevatedButton.icon(
+                          //   onPressed: () async {
+                          //     final data = await laporanFuture;
+
+                          //     await generateLaporanPDF(
+                          //       selectedDate: selectedDate,
+                          //       saldoAwal: data['saldoAwal'],
+                          //       totalPemasukan: data['totalPemasukan'],
+                          //       totalPengeluaran: data['totalPengeluaran'],
+                          //       saldoAkhir: data['saldoAkhir'],
+                          //       pemasukan: data['pemasukan'],
+                          //       pengeluaran: data['pengeluaran'],
+                          //     );
+                          //   },
+                          //   icon: Icon(Icons.picture_as_pdf),
+                          //   label: Text('Generate PDF'),
+                          //   style: ElevatedButton.styleFrom(
+                          //     backgroundColor: Color(0xFF37672F),
+                          //     foregroundColor: Colors.white,
+                          //   ),
+                          // ),
                         ],
                       );
                     },
                   ),
                 ),
               ),
-              SizedBox(height: 60),
+              role == 'admin' ? SizedBox(height: 60) : SizedBox(height: 1),
             ],
           ),
         ),
