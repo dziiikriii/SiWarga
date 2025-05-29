@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:si_warga/pages/generate_tagihan_bulanan.dart';
@@ -19,6 +20,20 @@ class AdminTagihanWarga extends StatefulWidget {
 class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
   int selectedIndex = 0;
   DateTime selectedDate = DateTime.now();
+  String? role;
+
+  Future<void> fetchUserRole() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (mounted) {
+        setState(() {
+          role = doc.data()?['role'];
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +68,7 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
             // SizedBox(height: 20),
             Expanded(
               child: Container(
+                // width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -120,42 +136,51 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
           ],
         ),
       ),
-      floatingActionButton: PopupMenuButton<int>(
-        onSelected: (value) {
-          if (value == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => TambahTagihan()),
-            );
-          } else if (value == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => GenerateTagihanBulanan()),
-            );
-          } else if (value == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => KonfirmasiPembayaranWarga()),
-            );
-          }
-        },
-        itemBuilder:
-            (context) => [
-              PopupMenuItem(value: 1, child: Text('Tambah Tagihan')),
-              PopupMenuItem(value: 2, child: Text('Generate Tagihan')),
-              PopupMenuItem(
-                value: 3,
-                child: Text('Konfirmasi Pembayaran Warga'),
-              ),
-            ],
-        offset: Offset(0, -105), // posisikan di atas FAB
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        icon: FloatingActionButton(
-          onPressed: null, // disable klik langsung
-          backgroundColor: Color(0xFF37672F),
-          child: Icon(Icons.more_vert, color: Colors.white),
-        ),
-      ),
+      floatingActionButton:
+          role == 'admin'
+              ? PopupMenuButton<int>(
+                onSelected: (value) {
+                  if (value == 1) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => TambahTagihan()),
+                    );
+                  } else if (value == 2) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => GenerateTagihanBulanan(),
+                      ),
+                    );
+                  } else if (value == 3) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => KonfirmasiPembayaranWarga(),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder:
+                    (context) => [
+                      PopupMenuItem(value: 1, child: Text('Tambah Tagihan')),
+                      PopupMenuItem(value: 2, child: Text('Generate Tagihan')),
+                      PopupMenuItem(
+                        value: 3,
+                        child: Text('Konfirmasi Pembayaran Warga'),
+                      ),
+                    ],
+                offset: Offset(0, -105), // posisikan di atas FAB
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                icon: FloatingActionButton(
+                  onPressed: null, // disable klik langsung
+                  backgroundColor: Color(0xFF37672F),
+                  child: Icon(Icons.more_vert, color: Colors.white),
+                ),
+              )
+              : null,
 
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

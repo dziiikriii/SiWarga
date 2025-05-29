@@ -27,7 +27,15 @@ class PengeluaranPemasukanItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(name, style: TextStyle(fontWeight: fontWeight, color: color)),
+          Expanded(
+            child: Text(
+              name,
+              textAlign: TextAlign.left,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontWeight: fontWeight, color: color),
+            ),
+          ),
           Text(
             formatRupiah.format(value),
             style: TextStyle(fontWeight: fontWeight, color: color),

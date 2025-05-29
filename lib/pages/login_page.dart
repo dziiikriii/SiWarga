@@ -136,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   if (!mounted) return;
                   if (!context.mounted) return;
-                  Navigator.pop(context); // Tutup loading dialog
+                  Navigator.pop(context);
 
                   if (user != null) {
                     // Ambil role-nya
@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Login gagal')),
+                      const SnackBar(content: Text('Login gagal'), backgroundColor: Color(0xFF184E0E),),
                     );
                   }
                 },

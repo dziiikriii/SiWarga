@@ -19,7 +19,7 @@ class KelolaWargaItem extends StatefulWidget {
 
 class _KelolaWargaItemState extends State<KelolaWargaItem> {
   // final List<String> roles = ['warga', 'admin', 'pengurus'];
-  final List<String> roles = ['warga', 'admin'];
+  final List<String> roles = ['warga', 'admin', 'pengurus'];
   String? selectedRole;
 
   @override
@@ -89,6 +89,7 @@ class _KelolaWargaItemState extends State<KelolaWargaItem> {
                                   content: Text(
                                     'Akun berhasil disetujui dengan role $selectedRole',
                                   ),
+                                  backgroundColor: Color(0xFF184E0E),
                                 ),
                               );
                             });
@@ -96,6 +97,12 @@ class _KelolaWargaItemState extends State<KelolaWargaItem> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Silakan pilih role terlebih dahulu'),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              212,
+                              127,
+                              0,
+                            ),
                           ),
                         );
                       }

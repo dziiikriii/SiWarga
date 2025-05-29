@@ -20,6 +20,7 @@ class _AdminProfileState extends State<AdminProfile> {
   String nama = '';
   String email = '';
   String? photoUrl;
+  String? role;
 
   @override
   void initState() {
@@ -32,6 +33,19 @@ class _AdminProfileState extends State<AdminProfile> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     fetchDataProfil();
+  }
+
+  Future<void> fetchUserRole() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (mounted) {
+        setState(() {
+          role = doc.data()?['role'];
+        });
+      }
+    }
   }
 
   String capitalizeEachWord(String text) {
@@ -193,28 +207,30 @@ class _AdminProfileState extends State<AdminProfile> {
                 }
               },
             ),
+            if (role == 'admin') SizedBox(height: 20),
+            if (role == 'admin')
+              FullWidthButton(
+                text: 'Tambah Admin',
+                color: Color(0xFF749C6C),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TambahAdmin()),
+                  );
+                },
+              ),
             SizedBox(height: 20),
-            FullWidthButton(
-              text: 'Tambah Admin',
-              color: Color(0xFF749C6C),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TambahAdmin()),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            FullWidthButton(
-              text: 'Daftar Nomor Rekening',
-              color: Colors.grey,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => DaftarNoRek()),
-                );
-              },
-            ),
+            if (role == 'admin')
+              FullWidthButton(
+                text: 'Daftar Nomor Rekening',
+                color: Colors.grey,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => DaftarNoRek()),
+                  );
+                },
+              ),
           ],
         ),
       ),

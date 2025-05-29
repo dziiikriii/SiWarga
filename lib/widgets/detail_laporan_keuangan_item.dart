@@ -35,16 +35,25 @@ class DetailLaporanKeuanganItem extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              child: Text(
-                nama,
-                style: TextStyle(
-                  color: Color(0xFF184E0E),
-                  fontWeight: FontWeight.bold,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                child: Text(
+                  nama,
+                  textAlign: TextAlign.left,
+                  maxLines: 3,
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(
+                    color: Color(0xFF184E0E),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
+            SizedBox(width: 50),
             Row(
               children: [
                 InkWell(
@@ -178,7 +187,18 @@ class DetailLaporanKeuanganItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('Keterangan'), Text(keterangan)],
+            children: [
+              Text('Keterangan'),
+              SizedBox(width: 70),
+              Expanded(
+                child: Text(
+                  keterangan,
+                  textAlign: TextAlign.right,
+                  maxLines: 6,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
         Divider(),

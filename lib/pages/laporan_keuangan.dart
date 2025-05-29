@@ -331,6 +331,13 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
     );
 
     await Printing.layoutPdf(onLayout: (format) async => pdf.save());
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Berhasil download laporan sebagai PDF'),
+        backgroundColor: Color(0xFF184E0E),
+      ),
+    );
   }
 
   @override

@@ -78,9 +78,15 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = widget.role == 'admin' ? adminPages : wargaPages;
+    // final idAdminOrPengurus = widget.role == 'admin' || wid
+    final pages =
+        widget.role == 'admin' || widget.role == 'pengurus'
+            ? adminPages
+            : wargaPages;
     final bottomNavItems =
-        widget.role == 'admin' ? adminBottomNavItems : wargaBottomNavItems;
+        widget.role == 'admin' || widget.role == 'pengurus'
+            ? adminBottomNavItems
+            : wargaBottomNavItems;
 
     return Scaffold(
       body: pages[_selectedIndex],

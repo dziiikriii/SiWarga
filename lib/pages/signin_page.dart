@@ -91,6 +91,7 @@ class _SigninPageState extends State<SigninPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Semua data harus diisi dengan benar'),
+                          backgroundColor: Color(0xFF184E0E),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
@@ -116,6 +117,7 @@ class _SigninPageState extends State<SigninPage> {
                           content: Text(
                             'Email verifikasi telah dikirim. Silahkan cek email anda.',
                           ),
+                          backgroundColor: Color(0xFF184E0E),
                         ),
                       );
 
@@ -126,7 +128,10 @@ class _SigninPageState extends State<SigninPage> {
                     } else {
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Gagal mendaftar')),
+                        SnackBar(
+                          content: Text('Gagal mendaftar'),
+                          backgroundColor: Color(0xFF184E0E),
+                        ),
                       );
                     }
                   },

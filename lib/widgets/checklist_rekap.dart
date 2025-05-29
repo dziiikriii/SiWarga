@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -25,11 +26,25 @@ class ChecklistRekap extends StatefulWidget {
 
 class _ChecklistRekapState extends State<ChecklistRekap> {
   late bool condition;
+  String? role;
 
   @override
   void initState() {
     super.initState();
     condition = widget.initialCondition;
+  }
+
+  Future<void> fetchUserRole() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (mounted) {
+        setState(() {
+          role = doc.data()?['role'];
+        });
+      }
+    }
   }
 
   Future<void> _toggleConditionWithConfirmation() async {
@@ -109,7 +124,7 @@ class _ChecklistRekapState extends State<ChecklistRekap> {
         ? Padding(
           padding: const EdgeInsets.symmetric(horizontal: 7),
           child: InkWell(
-            onTap: _toggleConditionWithConfirmation,
+            onTap: role == 'admin' ? _toggleConditionWithConfirmation : null,
             child: Icon(
               Icons.check_circle_rounded,
               color: Color.fromARGB(255, 113, 213, 73),
@@ -127,7 +142,7 @@ class _ChecklistRekapState extends State<ChecklistRekap> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: InkWell(
-              onTap: _toggleConditionWithConfirmation,
+              onTap: role == 'admin' ? _toggleConditionWithConfirmation : null,
               child: Icon(Icons.close_rounded, color: Colors.white, size: 25),
             ),
           ),

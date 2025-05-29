@@ -75,6 +75,7 @@ class AuthService {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Email belum diverifikasi. Silakan cek email anda'),
+            backgroundColor: Color(0xFF184E0E),
           ),
         );
         return null;
@@ -91,7 +92,10 @@ class AuthService {
       if (role == null || role == 'pending') {
         await _auth.signOut();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Akun anda belum disetujui oleh admin')),
+          const SnackBar(
+            content: Text('Akun anda belum disetujui oleh admin'),
+            backgroundColor: Color(0xFF184E0E),
+          ),
         );
         return null;
       }

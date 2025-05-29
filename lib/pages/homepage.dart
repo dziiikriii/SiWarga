@@ -18,6 +18,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   final Set<String> notifiedPembayaranIds = {};
+  String? role;
 
   @override
   void initState() {
@@ -25,6 +26,7 @@ class _HomepageState extends State<Homepage> {
     // _listenPembayaranBaru();
     // NotificationService.initialize();
     _cekDanPasangListener();
+    fetchUserRole();
     // saveAdminToken();
   }
 
@@ -40,6 +42,19 @@ class _HomepageState extends State<Homepage> {
   //     }
   //   }
   // }
+
+  Future<void> fetchUserRole() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (mounted) {
+        setState(() {
+          role = doc.data()?['role'];
+        });
+      }
+    }
+  }
 
   void _listenSemuaPembayaran() {
     FirebaseFirestore.instance.collection('tagihan_user').get().then((
@@ -168,41 +183,42 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const KelolaWarga(),
-                            ),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF184E0E),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Text(
-                                'Kelola Warga',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      if (role == 'admin')
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const KelolaWarga(),
                               ),
-                              SizedBox(width: 10),
-                              Icon(Icons.arrow_forward_rounded, size: 25),
-                            ],
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xFF184E0E),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Text(
+                                  'Kelola Warga',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Icon(Icons.arrow_forward_rounded, size: 25),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                       SizedBox(height: 50),
                       InfoSaldoHome(),
                     ],
