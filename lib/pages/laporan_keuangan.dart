@@ -144,6 +144,7 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
   Future<void> generateLaporanPDF({
     required DateTime selectedDate,
     required int saldoAwal,
+    required int totalIuran,
     required int totalPemasukan,
     required int totalPengeluaran,
     required int saldoAkhir,
@@ -213,41 +214,52 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                         'Jumlah (Rp)',
                         'Keterangan',
                       ],
-                      data:
-                          pemasukan.asMap().entries.map((entry) {
-                            final idx = entry.key + 1;
-                            final item = entry.value;
-                            final tanggal =
-                                item['tanggal'] != null
-                                    ? (() {
-                                      final rawTanggal = item['tanggal'];
-                                      if (rawTanggal is Timestamp) {
-                                        return dateFormat.format(
-                                          rawTanggal.toDate(),
-                                        );
-                                      } else if (rawTanggal is DateTime) {
-                                        return dateFormat.format(rawTanggal);
-                                      } else if (rawTanggal is String) {
-                                        return dateFormat.format(
-                                          DateTime.parse(rawTanggal),
-                                        );
-                                      } else {
-                                        return '-';
-                                      }
-                                    })()
-                                    : '-';
-                            final nama = item['nama'] ?? '-';
-                            final jumlah = formatter.format(item['jumlah']);
-                            final keterangan =
-                                (item['keterangan'] != null &&
-                                        item['keterangan']
-                                            .toString()
-                                            .trim()
-                                            .isNotEmpty)
-                                    ? item['keterangan'].toString()
-                                    : 'Tidak ada keterangan';
-                            return ['$idx', tanggal, nama, jumlah, keterangan];
-                          }).toList(),
+                      data: [
+                        // Data pemasukan yang sudah ada
+                        ...pemasukan.asMap().entries.map((entry) {
+                          final idx = entry.key + 1;
+                          final item = entry.value;
+                          final tanggal =
+                              item['tanggal'] != null
+                                  ? (() {
+                                    final rawTanggal = item['tanggal'];
+                                    if (rawTanggal is Timestamp) {
+                                      return dateFormat.format(
+                                        rawTanggal.toDate(),
+                                      );
+                                    } else if (rawTanggal is DateTime) {
+                                      return dateFormat.format(rawTanggal);
+                                    } else if (rawTanggal is String) {
+                                      return dateFormat.format(
+                                        DateTime.parse(rawTanggal),
+                                      );
+                                    } else {
+                                      return '-';
+                                    }
+                                  })()
+                                  : '-';
+                          final nama = item['nama'] ?? '-';
+                          final jumlah = formatter.format(item['jumlah']);
+                          final keterangan =
+                              (item['keterangan'] != null &&
+                                      item['keterangan']
+                                          .toString()
+                                          .trim()
+                                          .isNotEmpty)
+                                  ? item['keterangan'].toString()
+                                  : 'Tidak ada keterangan';
+                          return ['$idx', tanggal, nama, jumlah, keterangan];
+                        }),
+
+                        // Baris tambahan untuk Total Iuran Warga
+                        [
+                          '${pemasukan.length + 1}', // Nomor urut terakhir
+                          dateFormat.format(DateTime.now()), // Tanggal sekarang
+                          'Total Iuran Warga',
+                          formatter.format(totalIuran),
+                          'Total iuran warga pada saat ini',
+                        ],
+                      ],
                       cellStyle: bodyStyle,
                       headerStyle: subHeaderStyle,
                       headerDecoration: pw.BoxDecoration(
@@ -522,6 +534,7 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                               await generateLaporanPDF(
                                 selectedDate: selectedDate,
                                 saldoAwal: data['saldoAwal'],
+                                totalIuran: data['totalIuran'],
                                 totalPemasukan: data['totalPemasukan'],
                                 totalPengeluaran: data['totalPengeluaran'],
                                 saldoAkhir: data['saldoAkhir'],
