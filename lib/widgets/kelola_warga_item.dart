@@ -79,10 +79,25 @@ class _KelolaWargaItemState extends State<KelolaWargaItem> {
                             .collection('users')
                             .where('email', isEqualTo: widget.email)
                             .get()
-                            .then((query) {
-                              query.docs.first.reference.update({
-                                'role': selectedRole,
-                              });
+                            .then((query) async {
+                              if (query.docs.isNotEmpty) {
+                                final userRef = query.docs.first.reference;
+
+                                final Map<String, dynamic> updateData = {
+                                  'role': selectedRole,
+                                };
+
+                                if (selectedRole == 'admin' ||
+                                    selectedRole == 'pengurus') {
+                                  updateData['blok'] = FieldValue.delete();
+                                  updateData['no_rumah'] = FieldValue.delete();
+                                }
+                                await userRef.update(updateData);
+                              }
+
+                              // query.docs.first.reference.update({
+                              //   'role': selectedRole,
+                              // });
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

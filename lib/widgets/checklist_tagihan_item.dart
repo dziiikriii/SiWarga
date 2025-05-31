@@ -68,6 +68,12 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchUserRole();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
@@ -104,8 +110,8 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
                     formatter.format(widget.value),
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                   ),
-                  if (role == 'admin') SizedBox(width: 10),
-                  if (role == 'admin')
+                  if (role == 'admin') ...[
+                    SizedBox(width: 10),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -125,8 +131,7 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
                         size: 28,
                       ),
                     ),
-                  if (role == 'admin') SizedBox(width: 10),
-                  if (role == 'admin')
+                    SizedBox(width: 10),
                     GestureDetector(
                       onTap: () async {
                         final confirmDelete = await showDialog<bool>(
@@ -149,9 +154,8 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
+                                    onPressed:
+                                        () => Navigator.of(context).pop(true),
                                     child: Text(
                                       'Hapus',
                                       style: TextStyle(
@@ -179,6 +183,7 @@ class _ChecklistTagihanItemState extends State<ChecklistTagihanItem> {
                         size: 28,
                       ),
                     ),
+                  ],
                 ],
               ),
             ],

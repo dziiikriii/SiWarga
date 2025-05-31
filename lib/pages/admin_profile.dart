@@ -26,6 +26,7 @@ class _AdminProfileState extends State<AdminProfile> {
   void initState() {
     super.initState();
     fetchDataProfil();
+    fetchUserRole();
     // Future.delayed(Duration.zero, fetchDataProfil());
   }
 

@@ -31,6 +31,7 @@ class _ChecklistRekapState extends State<ChecklistRekap> {
   @override
   void initState() {
     super.initState();
+    fetchUserRole();
     condition = widget.initialCondition;
   }
 
