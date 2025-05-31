@@ -36,6 +36,12 @@ class _AdminTagihanWargaState extends State<AdminTagihanWarga> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchUserRole();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final startOfYear = DateTime(selectedDate.year, 1, 1);
     // final endOfYear = DateTime(selectedDate.year + 1, 1, 1);

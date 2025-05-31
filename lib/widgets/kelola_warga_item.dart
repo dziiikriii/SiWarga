@@ -93,6 +93,27 @@ class _KelolaWargaItemState extends State<KelolaWargaItem> {
                                   updateData['no_rumah'] = FieldValue.delete();
                                 }
                                 await userRef.update(updateData);
+
+                                if (selectedRole == 'warga') {
+                                  final tagihanSnapshot =
+                                      await FirebaseFirestore.instance
+                                          .collection('tagihan')
+                                          .get();
+
+                                  for (var tagihanDoc in tagihanSnapshot.docs) {
+                                    final tagihanData = tagihanDoc.data();
+
+                                    await FirebaseFirestore.instance
+                                        .collection('tagihan_user')
+                                        .doc(widget.uid)
+                                        .collection('items')
+                                        .doc(tagihanDoc.id)
+                                        .set({
+                                          ...tagihanData,
+                                          'status': 'belum bayar',
+                                        });
+                                  }
+                                }
                               }
 
                               // query.docs.first.reference.update({

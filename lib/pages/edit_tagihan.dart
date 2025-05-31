@@ -117,12 +117,17 @@ class _EditTagihanState extends State<EditTagihan> {
                         .get();
 
                 for (var doc in wargaSnapshot.docs) {
-                  await firestore
+                  final tagihanUserDoc = firestore
                       .collection('tagihan_user')
                       .doc(doc.id)
                       .collection('items')
-                      .doc(widget.tagihanId)
-                      .update(updatedData);
+                      .doc(widget.tagihanId);
+                  // .update(updatedData);
+
+                  final snapshot = await tagihanUserDoc.get();
+                  if (snapshot.exists) {
+                    await tagihanUserDoc.update(updatedData);
+                  }
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);

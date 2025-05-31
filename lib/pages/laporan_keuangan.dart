@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:si_warga/pages/detail_laporan_keuangan.dart';
 import 'package:si_warga/pages/tambah_pemasukan.dart';
 import 'package:si_warga/pages/tambah_pengeluaran.dart';
+import 'package:si_warga/services/laporan_service.dart';
 import 'package:si_warga/widgets/app_bar_default.dart';
 import 'package:si_warga/widgets/full_width_button.dart';
 import 'package:si_warga/widgets/header_laporan_keuangan.dart';
@@ -30,8 +31,17 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
   void initState() {
     super.initState();
     fetchUserRole();
+    // _updateAndFetchLaporan();
+    LaporanService.updateLaporanKeuanganOtomatis(selectedDate);
     laporanFuture = fetchLaporan(selectedDate);
   }
+
+  // Future<void> _updateAndFetchLaporan() async {
+  //   await LaporanService.updateLaporanKeuanganOtomatis(selectedDate);
+  //   setState(() {
+  //     laporanFuture = fetchLaporan(selectedDate);
+  //   });
+  // }
 
   Future<void> fetchUserRole() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -51,6 +61,11 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
     final docRef = FirebaseFirestore.instance
         .collection('laporan_keuangan')
         .doc(tahunBulan);
+    // final docRefData = await docRef.get();
+
+    final docSnapshot = await docRef.get();
+    final totalIuran =
+        docSnapshot.exists ? (docSnapshot.data()?['total'] ?? 0) : 0;
 
     int saldoAwal = 0;
 
@@ -68,15 +83,23 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
     }
 
     int totalPemasukan = 0;
+    int totalPemasukanLainnya = 0;
     int totalPengeluaran = 0;
 
     final pemasukanSnapshot = await docRef.collection('pemasukan').get();
     final pengeluaranSnapshot = await docRef.collection('pengeluaran').get();
+    // final pemasukanLainnya
 
+    totalPemasukanLainnya = docSnapshot.data()?['total'];
     final pemasukanList =
         pemasukanSnapshot.docs.map((doc) {
           final data = doc.data();
           totalPemasukan += (data['jumlah'] as num).toInt();
+          debugPrint('totalPemasukanLainnya = $totalPemasukanLainnya');
+          // totalPemasukan =
+          //     totalPemasukan +
+          //     (data['jumlah'] as num).toInt() +
+          //     totalPemasukanLainnya;
           return {
             'nama': data['nama'],
             'jumlah': data['jumlah'],
@@ -84,6 +107,8 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
             'keterangan': data['keterangan'],
           };
         }).toList();
+
+    totalPemasukan += totalPemasukanLainnya;
 
     final pengeluaranList =
         pengeluaranSnapshot.docs.map((doc) {
@@ -112,6 +137,7 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
       'pengeluaran': pengeluaranList,
       'totalPengeluaran': totalPengeluaran,
       'saldoAkhir': saldoAkhir,
+      'totalIuran': totalIuran,
     };
   }
 
@@ -355,6 +381,7 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                   setState(() {
                     selectedDate = newDate;
                     laporanFuture = fetchLaporan(selectedDate);
+                    LaporanService.updateLaporanKeuanganOtomatis(selectedDate);
                   });
                 },
               ),
@@ -379,6 +406,9 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                       final data = snapshot.data!;
                       final pemasukan = data['pemasukan'] as List;
                       final pengeluaran = data['pengeluaran'] as List;
+                      // final totalIuran = data['totalIuran'] ?? 0;
+                      final totalIuran =
+                          (data['totalIuran'] as num?)?.toInt() ?? 0;
 
                       return Column(
                         children: [
@@ -418,6 +448,14 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                                       title: 'Pemasukan',
                                       arrow: role == 'admin' ? true : false,
                                     ),
+                                  ),
+                                  PengeluaranPemasukanItem(
+                                    name: 'Total Iuran Warga',
+                                    value: totalIuran,
+                                    fontWeight: FontWeight.bold,
+                                    // color:
+                                    //     Colors
+                                    //         .green, // Warna khusus untuk iuran
                                   ),
                                   ...pemasukan.map(
                                     (item) => PengeluaranPemasukanItem(
@@ -492,27 +530,6 @@ class _LaporanKeuanganState extends State<LaporanKeuangan> {
                               );
                             },
                           ),
-                          // ElevatedButton.icon(
-                          //   onPressed: () async {
-                          //     final data = await laporanFuture;
-
-                          //     await generateLaporanPDF(
-                          //       selectedDate: selectedDate,
-                          //       saldoAwal: data['saldoAwal'],
-                          //       totalPemasukan: data['totalPemasukan'],
-                          //       totalPengeluaran: data['totalPengeluaran'],
-                          //       saldoAkhir: data['saldoAkhir'],
-                          //       pemasukan: data['pemasukan'],
-                          //       pengeluaran: data['pengeluaran'],
-                          //     );
-                          //   },
-                          //   icon: Icon(Icons.picture_as_pdf),
-                          //   label: Text('Generate PDF'),
-                          //   style: ElevatedButton.styleFrom(
-                          //     backgroundColor: Color(0xFF37672F),
-                          //     foregroundColor: Colors.white,
-                          //   ),
-                          // ),
                         ],
                       );
                     },
